@@ -15,7 +15,8 @@ export default function GoogleLogin() {
 
     script.onload = () => {
       window.google.accounts.id.initialize({
-        client_id: "5176453376-nvg3krlv442mpvco4fhs6angchv0g9nk.apps.googleusercontent.com", // Google Console'dan aldığınız Client ID
+        client_id:
+          "763124982060-mjoe6no2aujoqqgq83rvhum81gs6bbcj.apps.googleusercontent.com", // Google Console'dan aldığınız Client ID
         callback: async (response) => {
           if (!response.credential) {
             console.error("No credential received");
