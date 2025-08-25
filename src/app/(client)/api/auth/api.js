@@ -21,7 +21,8 @@ export async function continueWithGoogle({ idToken }) {
       `${API_BASE}/api/Account/continue-with-google`,
       {
         idToken,
-      }
+      },
+       { headers: { 'Content-Type': 'application/json' } } 
     );
     return res.data;
   } catch (error) {
@@ -29,3 +30,4 @@ export async function continueWithGoogle({ idToken }) {
     throw new Error("Google login failed");
   }
 }
+
