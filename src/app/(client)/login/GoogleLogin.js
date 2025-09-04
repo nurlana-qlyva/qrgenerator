@@ -27,6 +27,7 @@ export default function GoogleLogin() {
               idToken: response.credential,
             });
             console.log("Backend response:", data);
+            if (data.accessToken) {}
           } catch (err) {
             console.error("Backend error:", err);
           }
