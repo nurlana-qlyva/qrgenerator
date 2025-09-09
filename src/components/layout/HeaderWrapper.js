@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import PublicNavbar from "./PublicNavbar";
+import PublicNavbar from "./PublicNavbar.js";
 
 export default function HeaderWrapper() {
   const pathname = usePathname();

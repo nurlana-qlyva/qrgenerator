@@ -1,6 +1,6 @@
 "use client";
 
-import { continueWithGoogle } from "@/auth/api";
+import { continueWithGoogle } from "@/auth/api.js";
 import { useEffect, useRef } from "react";
 
 export default function GoogleLogin() {

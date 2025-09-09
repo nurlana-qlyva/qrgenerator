@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Col, Form, Input, message, Row, Tabs } from "antd";
-import QRCodeView from "./QRCodeView";
+import QRCodeView from "./QRCodeView.js";
 import styled from "styled-components";
-import ColorPicker from "./ColorPicker";
-import QRFrameList from "./QRFrameList";
-import FileUploadComponent from "./FileUPloadComponent";
+import ColorPicker from "./ColorPicker.js";
+import QRFrameList from "./QRFrameList.js";
+import FileUploadComponent from "./FileUPloadComponent.js";
 
 const TabList = styled(Tabs)`
   &.website-tabs {

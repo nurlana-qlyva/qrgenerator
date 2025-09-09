@@ -3,9 +3,8 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import GoogleLogin from "./GoogleLogin";
-import { signIn } from "@/auth/api";
-import { Image } from "antd";
+import GoogleLogin from "./GoogleLogin.js";
+import { signIn } from "@/auth/api.js";
 
 export default function LoginPage() {
   const {

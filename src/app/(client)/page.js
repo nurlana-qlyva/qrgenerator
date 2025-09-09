@@ -2,7 +2,7 @@
 import { Button, Layout, Tabs } from "antd";
 import Link from "next/link";
 import styles from "../../styles/HomePage.module.css";
-import WebsiteContent from "@/components/client/WebsiteContent";
+import WebsiteContent from "@/components/client/WebsiteContent.js";
 import styled from "styled-components";
 
 const { Content } = Layout;
