@@ -1,7 +1,7 @@
 "use client";
 
+import { continueWithGoogle } from "@/auth/api";
 import { useEffect, useRef } from "react";
-import { continueWithGoogle } from "../api/auth/api"; // API çağrınız için
 
 export default function GoogleLogin() {
   const googleButtonRef = useRef(null);
@@ -15,7 +15,7 @@ export default function GoogleLogin() {
 
     script.onload = () => {
       window.google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_CLIENTID, // Google Console'dan aldığınız Client ID
+        client_id: process.env.NEXT_PUBLIC_CLIENTID,
         callback: async (response) => {
           if (!response.credential) {
             console.error("No credential received");
@@ -40,7 +40,7 @@ export default function GoogleLogin() {
         theme: "outline",
         shape: "rectangular",
         text: "continue_with",
-        logo_alignment: "left",
+        logo_alignment: "center",
       });
     };
 

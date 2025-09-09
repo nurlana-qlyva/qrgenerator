@@ -4,16 +4,20 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import GoogleLogin from "./GoogleLogin";
-import { signIn } from "../api/auth/api";
+import { signIn } from "@/auth/api";
+import { Image } from "antd";
 
 export default function LoginPage() {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } =
-    useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
-    const res = await signIn(data)
-    console.log(res)
+    const res = await signIn(data);
+    console.log(res);
   };
 
   return (
@@ -32,11 +36,14 @@ export default function LoginPage() {
         {/* RIGHT SIDE */}
         <div className="p-8">
           <h2 className="mb-6 text-2xl font-bold">Login</h2>
-          <p className="mb-4 text-sm text-gray-600" style={{ marginBottom: "50px" }}>
+          <p
+            className="mb-4 text-sm text-gray-600"
+            style={{ marginBottom: "50px" }}
+          >
             Login to access your qrcodegenerator account
           </p>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Email */}
             <div>
               <label className="block text-sm font-medium">Email</label>
@@ -57,7 +64,9 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  {...register("password", { required: "Password is required" })}
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
                   placeholder="••••••••"
                   className="mt-1 w-full rounded-md border px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -70,7 +79,12 @@ export default function LoginPage() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-500" style={{ color: "#FF8682" }}>{errors.password.message}</p>
+                <p
+                  className="text-sm text-red-500"
+                  style={{ color: "#FF8682" }}
+                >
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -80,7 +94,11 @@ export default function LoginPage() {
                 <input type="checkbox" {...register("remember")} />
                 Remember me
               </label>
-              <a href="#" className="text-red-500 hover:underline" style={{ color: "#FF8682" }}>
+              <a
+                href="#"
+                className="text-red-500 hover:underline"
+                style={{ color: "#FF8682" }}
+              >
                 Forgot Password
               </a>
             </div>
@@ -98,31 +116,20 @@ export default function LoginPage() {
             {/* Signup Link */}
             <p className="text-center text-sm">
               Don’t have an account?{" "}
-              <a href="#" className="text-red-500 hover:underline" style={{ color: "#FF8682" }}>
+              <a
+                href="#"
+                className="text-red-500 hover:underline"
+                style={{ color: "#FF8682" }}
+              >
                 Sign up
               </a>
             </p>
           </form>
 
           {/* Social Login */}
-          <div className="mt-6 flex items-center gap-4 justify-center border-t pt-6">
-            <button
-              className="flex items-center justify-center rounded-md border p-2 hover:bg-gray-100"
-              style={{ color: "#3869EB", width: "33%" }}
-            >
-              <img src="/icons/fb.svg" alt="facebook" className="h-5 w-5" />
-            </button>
-
+          <div className="mt-6 border-t pt-6">
             <GoogleLogin />
-
-            <button
-              className="flex items-center justify-center rounded-md border p-2 hover:bg-gray-100"
-              style={{ color: "#3869EB", width: "33%" }}
-            >
-              <img src="/icons/apple.svg" alt="apple" className="h-5 w-5" />
-            </button>
           </div>
-
         </div>
       </div>
     </div>

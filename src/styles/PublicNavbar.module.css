@@ -1,0 +1,163 @@
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 70px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    padding: 0 15px;
+    height: 60px;
+  }
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.logoContainer a {
+  display: flex;
+  align-items: center;
+}
+
+.logoImage {
+  height: 40px;
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .logoImage {
+    height: 35px;
+  }
+}
+
+.desktopMenu {
+  flex: 1;
+  justify-content: center;
+  border-bottom: none;
+  background: transparent;
+}
+
+.desktopMenu :global(.ant-menu-item) {
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.3s ease all;
+  margin: 0 8px;
+}
+
+.desktopMenu :global(.ant-menu-item:hover::after),
+.desktopMenu :global(.ant-menu-item::after) {
+  border-bottom: none !important;
+}
+
+.desktopMenu :global(.ant-menu-item:hover a) {
+  color: #1d59f9 !important;
+}
+
+@media (max-width: 1024px) {
+  .desktopMenu {
+    display: none;
+  }
+}
+
+.mobileMenuButton {
+  display: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+@media (max-width: 1024px) {
+  .mobileMenuButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.desktopButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 1024px) {
+  .desktopButtons {
+    display: none;
+  }
+}
+
+.mobileButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  border-top: 1px solid #eee;
+  margin-top: 20px;
+}
+
+.styledButton {
+  min-width: 132px !important;
+  min-height: 40px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+}
+
+@media (max-width: 768px) {
+  .styledButton {
+    min-width: 100% !important;
+    min-height: 45px !important;
+  }
+}
+
+.primaryButton {
+  background: #1d59f9 !important;
+  border-color: #1d59f9 !important;
+}
+
+.primaryButton:hover {
+  background: #1548c7 !important;
+  border-color: #1548c7 !important;
+}
+
+.mobileMenu {
+  border: none;
+}
+
+.mobileMenu :global(.ant-menu-item) {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 15px 20px;
+  margin: 5px 0;
+  border-radius: 8px;
+}
+
+.mobileMenu :global(.ant-menu-item:hover) {
+  background-color: #f5f5f5;
+}
+
+.mobileMenu :global(.ant-menu-item a) {
+  color: #333;
+  text-decoration: none;
+}
+
+.mobileMenu :global(.ant-menu-item:hover a) {
+  color: #1d59f9;
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}

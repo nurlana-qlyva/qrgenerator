@@ -1,9 +1,10 @@
-import { Button, Col, Form, Input, message, Row, Tabs } from "antd";
-import ColorPicker from "./ColorPicker";
-import QRFrameList from "./QRFrameList";
+import { useCallback, useEffect, useState } from "react";
+import { Col, Form, Input, message, Row, Tabs } from "antd";
 import QRCodeView from "./QRCodeView";
 import styled from "styled-components";
-import { useCallback, useEffect, useState } from "react";
+import ColorPicker from "./ColorPicker";
+import QRFrameList from "./QRFrameList";
+import FileUploadComponent from "./FileUPloadComponent";
 
 const TabList = styled(Tabs)`
   &.website-tabs {
@@ -47,7 +48,7 @@ const TabList = styled(Tabs)`
 const WebsiteContent = () => {
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
-  const [qrContent, setQrContent] = useState("")
+  const [qrContent, setQrContent] = useState("");
 
   const title = (
     <div style={{ flex: 1, textAlign: "center" }}>
@@ -79,100 +80,9 @@ const WebsiteContent = () => {
     {
       key: "4",
       label: "Logo",
-      children: "Content of Tab Pane 4",
+      children: <FileUploadComponent />,
     },
   ];
-
-  // Backend API çağrısı için debounce fonksiyonu
-  const debounce = (func, wait) => {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  };
-
-  const generateQRCode = async (content, color, frame) => {
-    try {
-      const requestBody = {
-        type: 1,
-        payload: {
-          url: content
-        },
-        designOptions: {
-          backgroundColor: color,
-          shape: 1,
-        },
-      };
-
-      console.log("Backend'e gönderilen data:", requestBody);
-
-      // Backend API çağrısı
-      const response = await fetch("https://qrgenerates.com/api/QRCode/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        setQrCodeUrl(data.qrCodeUrl);
-        console.log("Yeni QR kod URL'i:", data.qrCodeUrl);
-      } else {
-        throw new Error(data.message || "QR kod oluşturulamadı");
-      }
-    } catch (error) {
-      console.error("QR kod generate hatası:", error);
-      message.error("QR kod oluşturulurken hata oluştu: " + error.message);
-    }
-  };
-
-  const debouncedGenerateQR = useCallback(
-    debounce((content, colors, frame) => {
-      generateQRCode(content, colors, frame);
-    }, 500), // 500ms bekle
-    []
-  );
-
-  // Frame değişikliğini izle
-  useEffect(() => {
-    if (qrContent) {
-      console.log("Frame değişti:", selectedFrame);
-      debouncedGenerateQR(qrContent, selectedColor, selectedFrame);
-    }
-  }, [selectedFrame]);
-
-  // Renk değişikliğini izle
-  useEffect(() => {
-    if (qrContent) {
-      console.log("Renkler değişti:", selectedColor);
-      debouncedGenerateQR(qrContent, selectedColor, selectedFrame);
-    }
-  }, [selectedColor]);
-
-  // İçerik değişikliğini izle
-  useEffect(() => {
-    if (qrContent) {
-      console.log("İçerik değişti:", qrContent);
-      debouncedGenerateQR(qrContent, selectedColor, selectedFrame);
-    }
-  }, [qrContent]);
-
-  // İlk yükleme
-  useEffect(() => {
-    generateQRCode(qrContent, selectedColor, selectedFrame);
-  }, []); // Component mount olduğunda bir kez çalış
 
   // Form içerik değişikliği
   const handleContentChange = (e) => {

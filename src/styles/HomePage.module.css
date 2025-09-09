@@ -1,0 +1,131 @@
+.content {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: #f5f5f5;
+  gap: 20px;
+  padding: 20px;
+}
+
+.hero {
+  /* Background image ile white overlay */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+  text-align: center;
+  color: #181c25;
+  width: 100%;
+  max-width: 1200px;
+  min-height: 60vh;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* Alternatif olarak ::before pseudo-element ile overlay */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  z-index: 1;
+}
+
+/* İçeriğin overlay'in üstünde görünmesi için */
+.hero > * {
+  position: relative;
+  z-index: 2;
+}
+
+.title {
+  font-size: 48px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.highlight {
+  color: #1d59f9;
+}
+
+.description {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 30px;
+  max-width: 600px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.heroButton {
+  min-width: 150px !important;
+  min-height: 50px !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+  background: #1d59f9 !important;
+  border-color: #1d59f9 !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+.heroButton:hover {
+  background: #1548c7 !important;
+  border-color: #1548c7 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(29, 89, 249, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero {
+    padding: 60px 15px;
+    min-height: 50vh;
+    margin: 10px;
+  }
+
+  .title {
+    font-size: 36px;
+  }
+
+  .description {
+    font-size: 16px;
+  }
+
+  .heroButton {
+    min-width: 100% !important;
+    max-width: 300px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 40px 15px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .description {
+    font-size: 14px;
+  }
+}
+
+.tab {
+  background: #e7e7ea;
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 1200px;
+}

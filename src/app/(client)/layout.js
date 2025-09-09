@@ -1,6 +1,6 @@
 import { Layout } from "antd";
-import FooterWrapper from "../components/layout/FooterWrapper";
-import HeaderWrapper from "../components/layout/HeaderWrapper";
+import FooterWrapper from "../../components/layout/FooterWrapper";
+import HeaderWrapper from "../../components/layout/HeaderWrapper";
 import "../globals.css";
 
 export default function PublicLayout({ children }) {

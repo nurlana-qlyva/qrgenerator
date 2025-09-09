@@ -1,8 +1,9 @@
-"use client"
+"use client";
 import { Button, Layout, Tabs } from "antd";
 import Link from "next/link";
+import styles from "../../styles/HomePage.module.css";
+import WebsiteContent from "@/components/client/WebsiteContent";
 import styled from "styled-components";
-import WebsiteContent from "../components/pages/client/home/WebsiteContent"
 
 const { Content } = Layout;
 
@@ -37,55 +38,6 @@ const TabList = styled(Tabs)`
   }
 `;
 
-const StyledButton = styled(Button)`
-  &.hero {
-    min-width: 132px !important;
-    min-height: 40px !important;
-    font-weight: 500 !important;
-
-    ${({ type }) =>
-      type === "primary" &&
-      `
-        background: #1d59f9 !important;
-        border-color: #1d59f9 !important;
-
-            &:hover {
-                background: #1548c7 !important;
-                border-color: #1548c7 !important;
-            }
-        `}
-  }
-`;
-
-const StyledHero = styled.div`
-  background: #fff !important;
-
-  &.hero {
-    padding: 60px 10px !important;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    text-align: center;
-    color: #181c25;
-
-    h1 {
-      font-size: 48px;
-
-      span {
-        color: #1d59f9;
-      }
-    }
-
-    p {
-      font-size: 16px;
-      font-weight: 500;
-
-      span {
-        color: #1d59f9;
-      }
-    }
-  }
-`;
-
 const items = [
   { label: `Website`, key: "1", children: <WebsiteContent /> },
   { label: `Text`, key: "2", children: `Content of Tab Pane 2` },
@@ -106,24 +58,34 @@ const HomePage = () => {
   };
 
   return (
-    <Content style={{ padding: "10px" }}>
-      <StyledHero className="hero">
-        <h1>
-          We make <span>QR codes</span> easy.
+    <Content className={styles.content}>
+      <div
+        className={styles.hero}
+        style={{
+          background: `linear-gradient(rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.01)), url(./images/hero.jpg)`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <h1 className={styles.title}>
+          We make <span className={styles.highlight}>QR codes</span> easy.
         </h1>
-        <p>
-          Easily <span>generate, manage and statistically</span> track your QR
-          codes
+        <p className={styles.description}>
+          Easily
+          <span className={styles.highlight}>
+            generate, manage and statistically
+          </span>
+          track your QR codes
         </p>
         <Link href="/">
-          <StyledButton type="primary" style={{ background: "#1D59F9" }}>
+          <Button type="primary" className={styles.heroButton}>
             Create QR Code
-          </StyledButton>
+          </Button>
         </Link>
-      </StyledHero>
-      <div
-        style={{ background: "#E7E7EA", padding: "10px", borderRadius: "10px" }}
-      >
+      </div>
+
+      <div className={styles.tab}>
         <TabList
           defaultActiveKey="1"
           onChange={onChange}

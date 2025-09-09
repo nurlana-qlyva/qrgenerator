@@ -18,6 +18,30 @@ const QRCodeView = ({
     </svg>
   `;
 
+  // Frame'e göre QR kod pozisyonunu belirle
+  const getQRPosition = () => {
+    if (!selectedFrame) {
+      return {
+        size: 160,
+        top: "10%",
+        left: "50%",
+        scale: 1,
+      };
+    }
+
+    // Frame metadata'sından pozisyon bilgilerini al
+    const framePosition = selectedFrame.qrPosition || {};
+
+    return {
+      size: framePosition.size || 120,
+      top: framePosition.top || "0%",
+      left: framePosition.left || "50%",
+      scale: framePosition.scale || 1,
+    };
+  };
+
+  const qrPosition = getQRPosition();
+
   const handleDownload = () => {
     const qrCodeSvg = generateQRCodeSvg(
       selectedColors.primary,
@@ -48,7 +72,6 @@ const QRCodeView = ({
         <div className="relative">
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <div className="w-48 h-48 mx-auto relative flex items-center justify-center">
-              
               {/* Frame Background - En altta */}
               {selectedFrame && (
                 <img
@@ -61,14 +84,24 @@ const QRCodeView = ({
                 />
               )}
 
-              {/* QR Code - Frame'in ortasında */}
-              <div className="relative z-20 flex items-center justify-center">
+              {/* QR Code - Dinamik pozisyonlama */}
+              <div
+                className="absolute z-20"
+                style={{
+                  top: qrPosition.top,
+                  left: qrPosition.left,
+                  transform: `${qrPosition.transform} 
+                             scale(${qrPosition.scale})`,
+                  transformOrigin: "center",
+                }}
+              >
                 <Image
                   src="/images/qrcode.png"
                   alt="QR Code"
-                  width={selectedFrame ? 120 : 160} // Frame varsa daha küçük, yoksa büyük
-                  height={selectedFrame ? 120 : 160}
-                  style={{ 
+                  width={qrPosition.size}
+                  height={qrPosition.size}
+                  preview={false}
+                  style={{
                     objectFit: "contain",
                   }}
                   className="rounded-lg"

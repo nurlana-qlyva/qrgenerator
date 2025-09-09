@@ -1,0 +1,154 @@
+.footerContainer {
+  background: #181c25;
+  padding: 60px 20px 40px;
+  color: #fff;
+  max-width: 1200px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .footerContainer {
+    padding: 40px 15px 30px;
+  }
+}
+
+.logoSection {
+  margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+  .logoSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.logoImage {
+  /* Normal boyutlar */
+}
+
+@media (max-width: 768px) {
+  .logoImage {
+    width: 150px !important;
+    height: 80px !important;
+    object-fit: contain;
+  }
+}
+
+.emailSection {
+  margin-top: 25px;
+}
+
+@media (max-width: 768px) {
+  .emailSection {
+    max-width: 300px;
+    margin: 25px auto 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .emailSection {
+    max-width: 100%;
+    margin: 25px 0 0;
+    width: 100%;
+  }
+}
+
+.styledInput {
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #333;
+  background: #2a2f3a;
+}
+
+.styledInput :global(.ant-input) {
+  background: #2a2f3a;
+  color: #fff;
+  border: none;
+}
+
+.styledInput :global(.ant-input::placeholder) {
+  color: #8b8e95;
+}
+
+@media (max-width: 768px) {
+  .styledInput {
+    width: 100%;
+  }
+}
+
+.emailButton {
+  background: #1e5bff !important;
+  border: none !important;
+}
+
+.emailButton:hover {
+  background: #1548c7 !important;
+}
+
+.menuSection {
+  /* Default stiller */
+}
+
+@media (max-width: 768px) {
+  .menuSection {
+    margin-bottom: 30px;
+  }
+}
+
+.menuTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 576px) {
+  .menuTitle {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+}
+
+.menuLink {
+  margin: 15px 0;
+}
+
+.menuLink a {
+  color: #b8bcc8 !important;
+  font-weight: 400;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.menuLink a:hover {
+  color: #1e5bff !important;
+}
+
+@media (max-width: 576px) {
+  .menuLink {
+    margin: 12px 0;
+  }
+}
+
+.footerRow {
+  /* Default row stiller */
+}
+
+@media (max-width: 768px) {
+  .footerRow {
+    flex-direction: column;
+  }
+}
+
+.menuRow {
+  /* Default row stiller */
+}
+
+@media (max-width: 576px) {
+  .menuRow {
+    flex-direction: column;
+  }
+}
