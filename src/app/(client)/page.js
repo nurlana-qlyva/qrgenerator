@@ -1,9 +1,10 @@
 "use client";
-import { Button, Layout, Tabs } from "antd";
+import { Button, Image, Layout, Tabs } from "antd";
 import Link from "next/link";
 import styles from "../../styles/HomePage.module.css";
-import WebsiteContent from "@/components/client/WebsiteContent.js";
 import styled from "styled-components";
+import WebsiteContent from "@/components/client/WebsiteContent.js";
+import TextContent from "@/components/client/TextContent.js";
 
 const { Content } = Layout;
 
@@ -39,17 +40,96 @@ const TabList = styled(Tabs)`
 `;
 
 const items = [
-  { label: `Website`, key: "1", children: <WebsiteContent /> },
-  { label: `Text`, key: "2", children: `Content of Tab Pane 2` },
-  { label: `Vcard`, key: "3", children: `Content of Tab Pane 3` },
-  { label: `PDF`, key: "4", children: `Content of Tab Pane 4` },
-  { label: `Images`, key: "5", children: `Content of Tab Pane 5` },
-  { label: `Videos`, key: "6", children: `Content of Tab Pane 6` },
-  { label: `Wifi`, key: "7", children: `Content of Tab Pane 7` },
-  { label: `Location`, key: "8", children: `Content of Tab Pane 8` },
-  { label: `Event`, key: "9", children: `Content of Tab Pane 9` },
-  { label: `App`, key: "10", children: `Content of Tab Pane 10` },
-  { label: `Phone`, key: "11", children: `Content of Tab Pane 11` },
+  {
+    label: (
+      <div className="flex items-center gap-3">
+        <Image
+          src="./icons/www.svg"
+          alt="qr code url"
+          preview={false}
+          width={20}
+        />
+        Website
+      </div>
+    ),
+    key: "1",
+    children: <WebsiteContent />,
+  },
+  {
+    label: (
+      <div className="flex items-center gap-3">
+        <Image
+          src="./icons/letter.svg"
+          alt="qr code url"
+          preview={false}
+          width={20}
+        />
+        Text
+      </div>
+    ),
+    key: "2",
+    children: <TextContent />,
+  },
+  {
+    label: (
+      <div className="flex items-center gap-3">
+        <Image
+          src="./icons/id.svg"
+          alt="qr code url"
+          preview={false}
+          width={20}
+        />
+        VCard
+      </div>
+    ),
+    key: "3",
+    children: `Content of Tab Pane 3`,
+  },
+  {
+    label: (
+      <div className="flex items-center gap-3">
+        <Image
+          src="./icons/pdf.svg"
+          alt="qr code url"
+          preview={false}
+          width={20}
+        />
+        PDF
+      </div>
+    ),
+    key: "4",
+    children: `Content of Tab Pane 4`,
+  },
+  {
+    label: (
+      <div className="flex items-center gap-3">
+        <Image
+          src="./icons/picture.svg"
+          alt="qr code url"
+          preview={false}
+          width={20}
+        />
+        Images
+      </div>
+    ),
+    key: "5",
+    children: `Content of Tab Pane 5`,
+  },
+  {
+    label: (
+      <div className="flex items-center gap-3">
+        <Image
+          src="./icons/video.svg"
+          alt="qr code url"
+          preview={false}
+          width={20}
+        />
+        Videos
+      </div>
+    ),
+    key: "6",
+    children: `Content of Tab Pane 6`,
+  },
 ];
 
 const HomePage = () => {
@@ -80,6 +160,11 @@ const HomePage = () => {
         </p>
         <Link href="/">
           <Button type="primary" className={styles.heroButton}>
+            <Image
+              src="./icons/qr.svg"
+              alt="qr code generator"
+              preview={false}
+            />{" "}
             Create QR Code
           </Button>
         </Link>

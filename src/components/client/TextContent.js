@@ -5,6 +5,7 @@ import styled from "styled-components";
 import ColorPicker from "./ColorPicker.js";
 import QRFrameList from "./QRFrameList.js";
 import FileUploadComponent from "./FileUPloadComponent.js";
+import TextArea from "antd/es/input/TextArea.js";
 
 const TabList = styled(Tabs)`
   &.website-tabs {
@@ -45,14 +46,17 @@ const TabList = styled(Tabs)`
   }
 `;
 
-const WebsiteContent = () => {
+const TextContent = () => {
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSocialIcon, setSelectedSocialIcon] = useState(null);
   const [qrContent, setQrContent] = useState("");
 
   const title = (
-    <div className="flex items-center gap-3" style={{ flex: 1, textAlign: "center" }}>
+    <div
+      className="flex items-center gap-3"
+      style={{ flex: 1, textAlign: "center" }}
+    >
       <Image src="./icons/design.svg" alt="qr code content" width={30} />
       <h3 style={{ margin: "0" }}>Design your Qr</h3>
     </div>
@@ -112,11 +116,10 @@ const WebsiteContent = () => {
             <Image src="./icons/content.svg" alt="qr code content" width={20} />
             <h2>Enter your content</h2>
           </div>
-
           <Form layout="vertical">
-            <Form.Item label="Your URL">
-              <Input
-                placeholder="https://www.qrcodegenerator.com"
+            <Form.Item label="Your text">
+              <TextArea
+                placeholder="Type your text"
                 onChange={handleContentChange}
               />
             </Form.Item>
@@ -143,4 +146,4 @@ const WebsiteContent = () => {
   );
 };
 
-export default WebsiteContent;
+export default TextContent;
