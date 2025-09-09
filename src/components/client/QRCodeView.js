@@ -6,6 +6,7 @@ import { useState } from "react";
 const QRCodeView = ({
   selectedFrame,
   selectedColors = { primary: "#000000", background: "#ffffff" },
+  selectedSocialIcon,
 }) => {
   const [selectedFormat, setSelectedFormat] = useState("PNG");
   const [selectedSize, setSelectedSize] = useState("1000px");
@@ -22,9 +23,9 @@ const QRCodeView = ({
   const getQRPosition = () => {
     if (!selectedFrame) {
       return {
-        size: 160,
-        top: "10%",
-        left: "50%",
+        size: 200,
+        top: "0%",
+        left: "0%",
         scale: 1,
       };
     }
@@ -41,17 +42,12 @@ const QRCodeView = ({
   };
 
   const qrPosition = getQRPosition();
+  const socialIconPosition = selectedFrame?.socialIconPosition;
 
   const handleDownload = () => {
     const qrCodeSvg = generateQRCodeSvg(
       selectedColors.primary,
       selectedColors.background
-    );
-
-    console.log(
-      `QR kod indirildi - Format: ${selectedFormat}, Boyut: ${selectedSize}, Frame: ${
-        selectedFrame?.id || "None"
-      }`
     );
 
     // Gerçek uygulamada burada QR kod generate edilip indirilir
@@ -107,6 +103,31 @@ const QRCodeView = ({
                   className="rounded-lg"
                 />
               </div>
+
+              {/* Social Media Icon - QR kodun tam ortasında */}
+              {selectedSocialIcon && (
+                <div 
+                  className="absolute z-30 flex items-center justify-center"
+                  style={{
+                    top: socialIconPosition?.top,
+                    left: socialIconPosition?.left,
+                    translate: socialIconPosition?.transform,
+                    width: "40px",
+                    height: "40px",
+                  }}
+                >
+                  <Image
+                    src={selectedSocialIcon.icon}
+                    alt={`${selectedSocialIcon.name} icon`}
+                    width={40}
+                    height={40}
+                    preview={false}
+                    style={{
+                      objectFit: "contain",
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -148,12 +169,12 @@ const QRCodeView = ({
           ))}
         </div>
 
-        {/* Download Button */}
+        {/* Create Button */}
         <button
           onClick={handleDownload}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white py-4 px-6 rounded-xl font-semibold text-base transition-colors duration-200 shadow-lg hover:shadow-xl"
         >
-          Download QR
+          Create QR
         </button>
       </div>
     </div>

@@ -14,6 +14,11 @@ const qrFrames = [
       offsetX: 0,
       offsetY: 0,
     },
+    socialIconPosition: {
+      top: "50%",
+      left: "40%",
+      transform: "translate(-50%, -50%)",
+    },
   },
   {
     id: 2,
@@ -27,6 +32,11 @@ const qrFrames = [
       rotation: 5,
       offsetX: 1,
       offsetY: -2,
+    },
+    socialIconPosition: {
+      top: "35%",
+      left: "40%",
+      transform: "translate(-35%, -40%)",
     },
   },
   {
@@ -42,6 +52,11 @@ const qrFrames = [
       offsetX: 0,
       offsetY: 5,
     },
+    socialIconPosition: {
+      top: "30%",
+      left: "40%",
+      transform: "translate(-30%, -40%)",
+    },
   },
   {
     id: 4,
@@ -55,6 +70,11 @@ const qrFrames = [
       rotation: 15,
       offsetX: -5,
       offsetY: 3,
+    },
+    socialIconPosition: {
+      top: "30%",
+      left: "40%",
+      transform: "translate(-30%, -40%)",
     },
   },
   {
@@ -70,6 +90,11 @@ const qrFrames = [
       offsetX: 8,
       offsetY: -8,
     },
+    socialIconPosition: {
+      top: "30%",
+      left: "40%",
+      transform: "translate(-30%, -40%)",
+    },
   },
   {
     id: 6,
@@ -84,6 +109,11 @@ const qrFrames = [
       offsetX: 0,
       offsetY: 0,
     },
+    socialIconPosition: {
+      top: "30%",
+      left: "40%",
+      transform: "translate(-30%, -40%)",
+    },
   },
   {
     id: 7,
@@ -97,6 +127,11 @@ const qrFrames = [
       rotation: 3,
       offsetX: 8,
       offsetY: -2,
+    },
+    socialIconPosition: {
+      top: "27%",
+      left: "40%",
+      transform: "translate(-27%, -40%)",
     },
   },
 ];

@@ -48,6 +48,7 @@ const TabList = styled(Tabs)`
 const WebsiteContent = () => {
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSocialIcon, setSelectedSocialIcon] = useState(null);
   const [qrContent, setQrContent] = useState("");
 
   const title = (
@@ -80,7 +81,7 @@ const WebsiteContent = () => {
     {
       key: "4",
       label: "Logo",
-      children: <FileUploadComponent />,
+      children: <FileUploadComponent onSocialIconSelect={setSelectedSocialIcon} selectedSocialIcon={selectedSocialIcon} />,
     },
   ];
 
@@ -125,6 +126,7 @@ const WebsiteContent = () => {
           <QRCodeView
             selectedFrame={selectedFrame}
             selectedColors={selectedColor}
+            selectedSocialIcon={selectedSocialIcon}
           />
         </Col>
       </Row>

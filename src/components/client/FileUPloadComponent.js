@@ -57,16 +57,21 @@ const socialIcons = [
   },
 ];
 
-const SocialIcon = ({ icon, name }) => (
+const SocialIcon = ({ icon, name, isSelected, onClick }) => (
   <div
-    className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-200"
+    className={`w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-all duration-200 ${
+      isSelected 
+        ? "ring-2 ring-blue-500 ring-offset-2 shadow-lg" 
+        : "hover:shadow-md"
+    }`}
     title={name}
+    onClick={onClick}
   >
     <Image src={icon} alt={`${name} qr code`} preview={false} />
   </div>
 );
 
-const FileUploadComponent = () => {
+const FileUploadComponent = ({ selectedSocialIcon, onSocialIconSelect }) => {
   const [fileList, setFileList] = useState([]);
 
   const uploadProps = {
@@ -105,18 +110,31 @@ const FileUploadComponent = () => {
     },
   };
 
+  const handleSocialIconClick = (social) => {
+    // Aynı ikona tekrar tıklanırsa seçimi kaldır
+    if (selectedSocialIcon?.name === social.name) {
+      onSocialIconSelect(null);
+    } else {
+      onSocialIconSelect(social);
+    }
+  };
+
   return (
     <div className="w-full max-w-2xl mx-auto p-6 bg-gray-50 rounded-lg">
       {/* Social Media Icons */}
-      <div className="flex flex-wrap gap-3 justify-center mb-8">
-        {socialIcons.map((social, index) => (
-          <SocialIcon
-            key={index}
-            icon={social.icon}
-            color={social.color}
-            name={social.name}
-          />
-        ))}
+      <div className="mb-4">
+        <h4 className="text-sm font-medium text-gray-700 mb-3">Choose Social Media Icon:</h4>
+        <div className="flex flex-wrap gap-3 justify-center mb-8">
+          {socialIcons.map((social, index) => (
+            <SocialIcon
+              key={index}
+              icon={social.icon}
+              name={social.name}
+              isSelected={selectedSocialIcon?.name === social.name}
+              onClick={() => handleSocialIconClick(social)}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="w-full max-w-2xl mx-auto p-4 bg-white border-2 border-blue-400 rounded-lg">
