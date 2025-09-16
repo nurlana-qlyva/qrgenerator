@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Col, Form, Image, Input, Row, Tabs } from "antd";
 import QRCodeView from "./QRCodeView.js";
 import styled from "styled-components";
@@ -47,12 +47,18 @@ const TabList = styled(Tabs)`
 
 const WebsiteContent = () => {
   const [selectedFrame, setSelectedFrame] = useState(null);
-  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedBGColor, setSelectedBGColor] = useState("#ffffff");
+  const [selectedColor, setSelectedColor] = useState("#000000");
   const [selectedSocialIcon, setSelectedSocialIcon] = useState(null);
   const [qrContent, setQrContent] = useState("");
 
+useEffect(() => console.log(selectedBGColor), [selectedBGColor])
+
   const title = (
-    <div className="flex items-center gap-3" style={{ flex: 1, textAlign: "center" }}>
+    <div
+      className="flex items-center gap-3"
+      style={{ flex: 1, textAlign: "center" }}
+    >
       <Image src="./icons/design.svg" alt="qr code content" width={30} />
       <h3 style={{ margin: "0" }}>Design your Qr</h3>
     </div>
@@ -62,16 +68,23 @@ const WebsiteContent = () => {
     {
       key: "1",
       label: "Color",
-      children: <ColorPicker onColorChange={setSelectedColor} />,
+      children: (
+        <div className="flex flex-col gap-10">
+          <h4 className="bg-white text-xl p-3 rounded-xl">Color</h4>
+          <ColorPicker setColor={setSelectedColor} color={selectedColor} />
+          <h4 className="bg-white text-xl p-3 rounded-xl">Background</h4>
+          <ColorPicker setColor={setSelectedBGColor} color={selectedBGColor} />
+        </div>
+      ),
     },
     {
       key: "2",
       label: "Frame",
       children: (
-        <QRFrameList
-          selectedFrame={selectedFrame}
-          onFrameSelect={setSelectedFrame}
-        />
+          <QRFrameList
+            selectedFrame={selectedFrame}
+            onFrameSelect={setSelectedFrame}
+          />
       ),
     },
     {
@@ -117,7 +130,7 @@ const WebsiteContent = () => {
             <Form.Item label="Your URL">
               <Input
                 placeholder="https://www.qrcodegenerator.com"
-                onChange={handleContentChange}
+                onPressEnter={handleContentChange}
               />
             </Form.Item>
           </Form>
@@ -134,8 +147,10 @@ const WebsiteContent = () => {
         <Col span={8} style={{ padding: "10px" }}>
           <QRCodeView
             selectedFrame={selectedFrame}
-            selectedColors={selectedColor}
+            selectedBGColor={selectedBGColor}
+            selectedColor={selectedColor}
             selectedSocialIcon={selectedSocialIcon}
+            qrContent={qrContent}
           />
         </Col>
       </Row>

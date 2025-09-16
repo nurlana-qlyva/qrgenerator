@@ -2,18 +2,33 @@
 
 import React, { useState, useRef, useEffect } from "react";
 
-const ColorPicker = () => {
+const ColorPicker = ({ setColor, color }) => {
   const [hue, setHue] = useState(250);
   const [saturation, setSaturation] = useState(100);
   const [lightness, setLightness] = useState(35);
   const [alpha, setAlpha] = useState(100);
   const [colorFormat, setColorFormat] = useState("HEX");
-  const [colorValue, setColorValue] = useState("#2622A5");
   const [isDragging, setIsDragging] = useState(false);
   const [isHueDragging, setIsHueDragging] = useState(false);
 
   const saturationRef = useRef(null);
   const hueRef = useRef(null);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return; // ilk render'da setColor çalışmaz
+    }
+    const newColorValue = getColorValue(
+      colorFormat,
+      hue,
+      saturation,
+      lightness,
+      alpha
+    );
+    setColor(newColorValue);
+  }, [hue, saturation, lightness, alpha, colorFormat]);
 
   // Kaydedilmiş renkler
   const [savedColors] = useState([
@@ -225,18 +240,6 @@ const ColorPicker = () => {
     return null;
   };
 
-  // Renk değiştiğinde formatına göre renk değerini güncelle
-  useEffect(() => {
-    const newColorValue = getColorValue(
-      colorFormat,
-      hue,
-      saturation,
-      lightness,
-      alpha
-    );
-    setColorValue(newColorValue);
-  }, [hue, saturation, lightness, alpha, colorFormat]);
-
   // Saturation/Lightness picker için mouse olayları
   const handleSaturationMouseDown = (e) => {
     setIsDragging(true);
@@ -295,7 +298,6 @@ const ColorPicker = () => {
   // Renk input değişikliği
   const handleColorValueChange = (e) => {
     const value = e.target.value;
-    setColorValue(value);
 
     const parsedHsl = parseColorValue(value, colorFormat);
     if (parsedHsl) {
@@ -439,7 +441,7 @@ const ColorPicker = () => {
               </select>
               <input
                 type="text"
-                value={colorValue}
+                value={color}
                 onChange={handleColorValueChange}
                 className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono"
                 placeholder={

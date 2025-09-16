@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { signIn } from "@/auth/api";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import jwt_decode from "jwt-decode";
 
 const LoginModal = ({ open, onClose, onLoginSuccess }) => {
   const {
@@ -16,7 +17,17 @@ const LoginModal = ({ open, onClose, onLoginSuccess }) => {
 
   const onSubmit = async (data) => {
     const res = await signIn(data);
-    console.log(res);
+
+    if (res.accessToken) {
+      const expiry = Date.now() + 24 * 60 * 60 * 1000;
+      const token = res.accessToken;
+      const decoded = jwt_decode(token);
+
+      localStorage.setItem(
+        "auth",
+        JSON.stringify({ token, expiry, user: decoded })
+      );
+    }
   };
 
   return (
