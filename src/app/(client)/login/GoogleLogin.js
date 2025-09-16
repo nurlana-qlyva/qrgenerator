@@ -2,6 +2,7 @@
 
 import { continueWithGoogle } from "@/auth/api.js";
 import { useEffect, useRef } from "react";
+import jwt_decode from "jwt-decode";
 
 export default function GoogleLogin() {
   const googleButtonRef = useRef(null);
@@ -27,7 +28,16 @@ export default function GoogleLogin() {
               idToken: response.credential,
             });
             console.log("Backend response:", data);
-            if (data.accessToken) {}
+            if (data.accessToken) {
+              const expiry = Date.now() + 24 * 60 * 60 * 1000;
+              const token = data.accessToken;
+              const decoded = jwt_decode(token);
+
+              localStorage.setItem(
+                "auth",
+                JSON.stringify({ token, expiry, user: decoded })
+              );
+            }
           } catch (err) {
             console.error("Backend error:", err);
           }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Image } from "antd";
+import axios from "axios";
 import { useState } from "react";
 
 const QRCodeView = ({
@@ -44,20 +45,47 @@ const QRCodeView = ({
   const qrPosition = getQRPosition();
   const socialIconPosition = selectedFrame?.socialIconPosition;
 
-  const handleDownload = () => {
-    const qrCodeSvg = generateQRCodeSvg(
-      selectedColors.primary,
-      selectedColors.background
-    );
+  const handleDownload = async () => {
+    // const qrCodeSvg = generateQRCodeSvg(
+    //   selectedColors.primary,
+    //   selectedColors.background
+    // );
 
-    // Gerçek uygulamada burada QR kod generate edilip indirilir
-    const element = document.createElement("a");
-    const file = new Blob([qrCodeSvg], { type: "image/svg+xml" });
-    element.href = URL.createObjectURL(file);
-    element.download = `qr-code-${selectedSize}.${selectedFormat.toLowerCase()}`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    // // Gerçek uygulamada burada QR kod generate edilip indirilir
+    // const element = document.createElement("a");
+    // const file = new Blob([qrCodeSvg], { type: "image/svg+xml" });
+    // element.href = URL.createObjectURL(file);
+    // element.download = `qr-code-${selectedSize}.${selectedFormat.toLowerCase()}`;
+    // document.body.appendChild(element);
+    // element.click();
+    // document.body.removeChild(element);
+    const API_BASE = "https://qrgenerates.com";
+    const body = {
+      type: 1,
+      payload: "string",
+      designOptions: {
+        foregroundColor: "#FF8800",
+        backgroundColor: "#FF8800",
+        shape: 1,
+        finderStyle: 1,
+        logoId: "1",
+      },
+    };
+
+    try {
+      const res = await axios.post(
+        `${API_BASE}/api/QRCode/generate`,
+        {
+          body,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      return res.data;
+    } catch (error) {
+      console.error(error);
+    }
+
+    console.log("yes");
   };
 
   return (
@@ -106,7 +134,7 @@ const QRCodeView = ({
 
               {/* Social Media Icon - QR kodun tam ortasında */}
               {selectedSocialIcon && (
-                <div 
+                <div
                   className="absolute z-30 flex items-center justify-center"
                   style={{
                     top: socialIconPosition?.top,

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Layout, Menu, Button, Drawer, Image } from "antd";
 import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import styles from "../../styles/PublicNavbar.module.css";
+import LoginModal from "@/app/(client)/login/page";
 
 const { Header } = Layout;
 
@@ -18,6 +19,18 @@ const menuItems = [
 
 export default function PublicNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // localStorage’da token varsa ve süresi geçmemişse otomatik login
+    const auth = JSON.parse(localStorage.getItem("auth"));
+    if (auth && auth.expiry > Date.now()) {
+      setUser(auth.user);
+    } else {
+      localStorage.removeItem("auth");
+    }
+  }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -52,9 +65,12 @@ export default function PublicNavbar() {
 
         {/* Desktop Login / Register Butonları */}
         <div className={styles.desktopButtons}>
-          <Link href="/login">
-            <Button className={styles.styledButton}>Log in</Button>
-          </Link>
+          <Button
+            className={styles.styledButton}
+            onClick={() => setIsModalOpen(true)}
+          >
+            Log in
+          </Button>
           <Link href="/register">
             <Button
               type="primary"
@@ -71,6 +87,11 @@ export default function PublicNavbar() {
           icon={<MenuOutlined style={{ fontSize: "20px" }} />}
           onClick={toggleMobileMenu}
           className={styles.mobileMenuButton}
+        />
+        <LoginModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onLoginSuccess={(userData) => setUser(userData)}
         />
       </Header>
 
