@@ -161,3 +161,14 @@
   border-bottom: 1px solid #eee;
   margin-bottom: 10px;
 }
+
+.desktopUserButton {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .desktopUserButton {
+    display: none;
+  }
+}

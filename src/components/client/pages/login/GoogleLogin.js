@@ -1,9 +1,9 @@
 "use client";
 
-import { continueWithGoogle } from "@/auth/api.js";
+import { continueWithGoogle } from "@/api/auth/api";
 import { useEffect, useRef } from "react";
 
-export default function GoogleLogin() {
+export default function GoogleLogin({ onLoginSuccess, onClose }) {
   const googleButtonRef = useRef(null);
 
   useEffect(() => {
@@ -14,6 +14,10 @@ export default function GoogleLogin() {
     document.body.appendChild(script);
 
     script.onload = () => {
+      // Önce auto select kapat
+      window.google.accounts.id.disableAutoSelect();
+
+      // Google init
       window.google.accounts.id.initialize({
         client_id: process.env.NEXT_PUBLIC_CLIENTID,
         callback: async (response) => {
@@ -29,21 +33,32 @@ export default function GoogleLogin() {
             if (data.accessToken) {
               const expiry = Date.now() + 24 * 60 * 60 * 1000;
               const token = data.accessToken;
+              const refreshToken = data.refreshToken;
               const decodeJWT = (token) =>
                 JSON.parse(atob(token.split(".")[1]));
               const decoded = decodeJWT(token);
 
               localStorage.setItem(
                 "auth",
-                JSON.stringify({ token, expiry, user: decoded })
+                JSON.stringify({ token, refreshToken, expiry, user: decoded })
               );
+
+              if (onClose) {
+                onClose();
+              }
+              if (onLoginSuccess) {
+                onLoginSuccess(decoded);
+              }
             }
           } catch (err) {
             console.error("Backend error:", err);
           }
         },
+        auto_select: false,
+        cancel_on_tap_outside: true,
       });
 
+      // Buton render
       window.google.accounts.id.renderButton(googleButtonRef.current, {
         type: "standard",
         size: "large",
@@ -57,11 +72,7 @@ export default function GoogleLogin() {
     return () => {
       document.body.removeChild(script);
     };
-  }, []);
+  }, [onLoginSuccess, onClose]);
 
-  return (
-    <>
-      <div ref={googleButtonRef}></div>
-    </>
-  );
+  return <div ref={googleButtonRef}></div>;
 }

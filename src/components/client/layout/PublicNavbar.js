@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Layout, Menu, Button, Drawer, Image } from "antd";
-import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
-import styles from "../../styles/PublicNavbar.module.css";
-import LoginModal from "@/app/(client)/login/page";
+import { Button, Drawer, Image, Layout, Menu, Typography } from "antd";
+import { MenuOutlined, CloseOutlined, LogoutOutlined } from "@ant-design/icons";
+import styles from "../../../styles/PublicNavbar.module.css";
+import Avatar from "./Avatar";
+import LoginModal from "../pages/login/LoginModal";
+import { continueWithGoogle } from "@/api/auth/api";
 
 const { Header } = Layout;
+const { Text } = Typography;
 
 const menuItems = [
   { key: "products", label: <Link href="/products">Products</Link> },
@@ -17,27 +20,61 @@ const menuItems = [
   { key: "api", label: <Link href="/api">API</Link> },
 ];
 
-export default function PublicNavbar() {
+const PublicNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const loginModalRef = useRef(null);
 
+  // Check for existing auth on component mount
   useEffect(() => {
-    // localStorage’da token varsa ve süresi geçmemişse otomatik login
-    const auth = JSON.parse(localStorage.getItem("auth"));
-    if (auth && auth.expiry > Date.now()) {
-      setUser(auth.user);
-    } else {
-      localStorage.removeItem("auth");
-    }
+    const checkAuth = async () => {
+      try {
+        const auth = localStorage.getItem("auth");
+        if (auth) {
+          const parsedAuth = JSON.parse(auth);
+          // Check if token is still valid
+          if (parsedAuth.expiry && Date.now() < parsedAuth.expiry) {
+            setUser(parsedAuth.user);
+          } else {
+            // Token expired, remove from localStorage
+            localStorage.removeItem("auth");
+            setUser(null);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking auth:", error);
+        localStorage.removeItem("auth");
+        setUser(null);
+      }
+    };
+
+    checkAuth();
   }, []);
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+    setIsModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+
+    if (loginModalRef.current) {
+      loginModalRef.current.clearGoogleSession();
+    }
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -55,7 +92,7 @@ export default function PublicNavbar() {
           </Link>
         </div>
 
-        {/* Desktop Menü */}
+        {/* Desktop Menu */}
         <Menu
           mode="horizontal"
           defaultSelectedKeys={["products"]}
@@ -63,39 +100,33 @@ export default function PublicNavbar() {
           className={styles.desktopMenu}
         />
 
-        {/* Desktop Login / Register Butonları */}
-        <div className={styles.desktopButtons}>
-          <Button
-            className={styles.styledButton}
-            onClick={() => setIsModalOpen(true)}
-          >
-            Log in
-          </Button>
-          <Link href="/register">
-            <Button
-              type="primary"
-              className={`${styles.styledButton} ${styles.primaryButton}`}
-            >
-              Register
-            </Button>
-          </Link>
+        {/* Desktop Login / Register */}
+        <div className={styles.desktopUserButton}>
+          <Avatar
+            user={user}
+            setIsModalOpen={setIsModalOpen}
+            onLogout={handleLogout}
+          />
         </div>
 
-        {/* Mobile Menü Butonu */}
+        {/* Mobile Menu Button */}
         <Button
           type="text"
           icon={<MenuOutlined style={{ fontSize: "20px" }} />}
           onClick={toggleMobileMenu}
           className={styles.mobileMenuButton}
         />
+
+        {/* Login Modal */}
         <LoginModal
+          ref={loginModalRef}
           open={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onLoginSuccess={(userData) => setUser(userData)}
+          onClose={handleModalClose}
+          onLoginSuccess={handleLoginSuccess}
         />
       </Header>
 
-      {/* Mobile Drawer Menü */}
+      {/* Mobile Drawer Menu */}
       <Drawer
         title={null}
         placement="right"
@@ -132,21 +163,9 @@ export default function PublicNavbar() {
           }))}
           className={styles.mobileMenu}
         />
-
-        <div className={styles.mobileButtons}>
-          <Link href="/login" onClick={closeMobileMenu}>
-            <Button className={styles.styledButton}>Log in</Button>
-          </Link>
-          <Link href="/register" onClick={closeMobileMenu}>
-            <Button
-              type="primary"
-              className={`${styles.styledButton} ${styles.primaryButton}`}
-            >
-              Register
-            </Button>
-          </Link>
-        </div>
       </Drawer>
     </>
   );
-}
+};
+
+export default PublicNavbar;

@@ -2,7 +2,7 @@ import { Row, Col, Input, Button } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import styles from "../../styles/PublicFooter.module.css";
+import styles from "../../../styles/PublicFooter.module.css";
 
 const menus = [
   {
@@ -118,7 +118,7 @@ const menus = [
 
 const PublicFooter = () => {
   return (
-    <div style={{display: "flex", justifyContent: "center"}}>
+    <div style={{ display: "flex", justifyContent: "center" }}>
       <div className={styles.footerContainer}>
         <Row gutter={[32, 32]} className={styles.footerRow}>
           <Col xs={24} sm={24} md={24} lg={6} xl={6}>
@@ -131,7 +131,7 @@ const PublicFooter = () => {
                 className={styles.logoImage}
               />
               <p style={{ marginTop: "20px" }}>
-                No need to worry, we'll help you make sense of it all..
+                No need to worry, we will help you make sense of it all..
               </p>
               <div className={styles.emailSection}>
                 <Input

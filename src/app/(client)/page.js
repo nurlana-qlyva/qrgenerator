@@ -1,43 +1,12 @@
 "use client";
-import { Button, Image, Layout, Tabs } from "antd";
+
 import Link from "next/link";
+import { Button, Image, Tabs } from "antd";
 import styles from "../../styles/HomePage.module.css";
-import styled from "styled-components";
-import WebsiteContent from "@/components/client/WebsiteContent.js";
-import TextContent from "@/components/client/TextContent.js";
 
-const { Content } = Layout;
-
-const TabList = styled(Tabs)`
-  .ant-tabs-nav {
-    background: #fff !important;
-    padding: 0 10px !important;
-    border-radius: 10px !important;
-  }
-
-  .ant-tabs-content-holder {
-    background: #fff !important;
-    padding: 10px !important;
-    border-radius: 10px !important;
-  }
-
-  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-    color: #1d59f9 !important;
-    background: #dde2fa !important;
-    border: 1px solid transparent !important;
-  }
-  .ant-tabs-tab-btn {
-    min-width: 52px !important;
-    background: #fff !important;
-    color: #000 !important;
-    border-radius: 10px !important;
-    border: 1px solid #e5e5e5 !important;
-    padding: 6px 16px !important;
-  }
-  .ant-tabs-ink-bar {
-    display: none !important;
-  }
-`;
+import { Content } from "antd/es/layout/layout";
+import WebsiteContent from "@/components/client/pages/qr-tabs/WebsiteContent";
+import TextContent from "@/components/client/pages/qr-tabs/TextContent";
 
 const items = [
   {
@@ -132,7 +101,7 @@ const items = [
   },
 ];
 
-const HomePage = () => {
+export default function Home() {
   const onChange = (key) => {
     console.log(key);
   };
@@ -171,7 +140,7 @@ const HomePage = () => {
       </div>
 
       <div className={styles.tab}>
-        <TabList
+        <Tabs
           defaultActiveKey="1"
           onChange={onChange}
           items={items}
@@ -179,10 +148,9 @@ const HomePage = () => {
           type="line"
           tabBarStyle={{ overflow: "hidden" }}
           moreIcon="..."
+          className={styles.customTabs}
         />
       </div>
     </Content>
   );
-};
-
-export default HomePage;
+}

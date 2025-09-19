@@ -136,7 +136,7 @@ const qrFrames = [
   },
 ];
 
-export default function QRFrameList({ selectedFrame, onFrameSelect }) {
+export default function FramePicker({ selectedFrame, onFrameSelect }) {
   return (
     <div className="w-full overflow-x-auto py-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">

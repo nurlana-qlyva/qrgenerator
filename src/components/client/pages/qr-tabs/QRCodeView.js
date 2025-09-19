@@ -1,13 +1,15 @@
 "use client";
 
+import { getQRCodeService } from "@/api/tabs/api";
 import { Image } from "antd";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const QRCodeView = ({
   selectedFrame,
   selectedBGColor,
   selectedColor,
+  selectedFrameColor,
   selectedSocialIcon,
   qrContent,
 }) => {
@@ -41,7 +43,6 @@ const QRCodeView = ({
   const socialIconPosition = selectedFrame?.socialIconPosition;
 
   const handleGenerate = async () => {
-    const API_BASE = "https://qrgenerates.com";
     const body = {
       type: 1,
       payload: {
@@ -56,28 +57,29 @@ const QRCodeView = ({
     };
 
     try {
-      const authData = JSON.parse(localStorage.getItem("auth"));
-      const token = authData?.token;
+      const res = await getQRCodeService(body);
+      console.log("QR Code Response:", res);
 
-      if (!token) {
-        console.error("No token found in localStorage");
-        return;
+      if (res?.qrCodeBase64) {
+        setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
+        console.log("QR Code generated successfully!");
+      } else {
+        throw new Error("Invalid response format");
       }
 
-      const res = await axios.post(`${API_BASE}/api/QRCode/generate`, body, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setQrBase64(`data:image/png;base64,${res.data.qrCodeBase64}`);
-      return res.data;
+      return res;
     } catch (error) {
-      console.error(error);
-    }
+      console.error("Generate QR Error:", error);
 
-    console.log("yes");
+      if (
+        error.message.includes("authentication") ||
+        error.message.includes("token")
+      ) {
+        alert("Please login again to continue.");
+      } else {
+        alert(`Error: ${error.message}`);
+      }
+    }
   };
 
   useEffect(() => {

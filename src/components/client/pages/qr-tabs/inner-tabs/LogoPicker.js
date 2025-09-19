@@ -60,8 +60,8 @@ const socialIcons = [
 const SocialIcon = ({ icon, name, isSelected, onClick }) => (
   <div
     className={`w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-all duration-200 ${
-      isSelected 
-        ? "ring-2 ring-blue-500 ring-offset-2 shadow-lg" 
+      isSelected
+        ? "ring-2 ring-blue-500 ring-offset-2 shadow-lg"
         : "hover:shadow-md"
     }`}
     title={name}
@@ -71,7 +71,7 @@ const SocialIcon = ({ icon, name, isSelected, onClick }) => (
   </div>
 );
 
-const FileUploadComponent = ({ selectedSocialIcon, onSocialIconSelect }) => {
+const LogoPicker = ({ selectedSocialIcon, onSocialIconSelect }) => {
   const [fileList, setFileList] = useState([]);
 
   const uploadProps = {
@@ -123,7 +123,9 @@ const FileUploadComponent = ({ selectedSocialIcon, onSocialIconSelect }) => {
     <div className="w-full max-w-2xl mx-auto p-6 bg-gray-50 rounded-lg">
       {/* Social Media Icons */}
       <div className="mb-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">Choose Social Media Icon:</h4>
+        <h4 className="text-sm font-medium text-gray-700 mb-3">
+          Choose Social Media Icon:
+        </h4>
         <div className="flex flex-wrap gap-3 justify-center mb-8">
           {socialIcons.map((social, index) => (
             <SocialIcon
@@ -164,4 +166,4 @@ const FileUploadComponent = ({ selectedSocialIcon, onSocialIconSelect }) => {
   );
 };
 
-export default FileUploadComponent;
+export default LogoPicker;

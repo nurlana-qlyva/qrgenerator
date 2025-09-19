@@ -1,46 +1,51 @@
 "use client";
-import { Modal } from "antd";
-import GoogleLogin from "./GoogleLogin";
-import { Eye, EyeOff } from "lucide-react";
-import { signIn } from "@/auth/api";
-import { useForm } from "react-hook-form";
+
 import { useState } from "react";
-import jwt_decode from "jwt-decode";
+import { useForm } from "react-hook-form";
+import { Modal } from "antd";
+import { Eye, EyeOff } from "lucide-react";
+import GoogleLogin from "./GoogleLogin";
+import { signIn } from "@/api/auth/api";
 
 const LoginModal = ({ open, onClose, onLoginSuccess }) => {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
     const res = await signIn(data);
-
     if (res.accessToken) {
-      const expiry = Date.now() + 24 * 60 * 60 * 1000;
+      const expiry = Date.now() + 60 * 60 * 1000;
       const token = res.accessToken;
+      const refreshToken = res.refreshToken;
       const decoded = jwt_decode(token);
-
       localStorage.setItem(
         "auth",
-        JSON.stringify({ token, expiry, user: decoded })
+        JSON.stringify({ token, refreshToken, expiry, user: decoded })
       );
+
+      reset();
+      onClose();
+
+      if (onLoginSuccess) {
+        onLoginSuccess(decoded);
+      }
     }
   };
 
-  return (
-    <Modal open={open} onCancel={onClose} footer={null} title="Login">
-      <div className="p-8">
-        <h2 className="mb-6 text-2xl font-bold">Login</h2>
-        <p
-          className="mb-4 text-sm text-gray-600"
-          style={{ marginBottom: "50px" }}
-        >
-          Login to access your qrcodegenerator account
-        </p>
+  const handleModalClose = () => {
+    reset();
+    setShowPassword(false);
+    onClose();
+  };
 
+  return (
+    <Modal open={open} onCancel={handleModalClose} footer={null} title="Login">
+      <div className="p-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Email */}
           <div>
@@ -121,9 +126,9 @@ const LoginModal = ({ open, onClose, onLoginSuccess }) => {
           </p>
         </form>
 
-        {/* Social Login */}
+        {/* Google Login */}
         <div className="mt-6 border-t pt-6">
-          <GoogleLogin />
+          <GoogleLogin onLoginSuccess={onLoginSuccess} onClose={onClose} />
         </div>
       </div>
     </Modal>

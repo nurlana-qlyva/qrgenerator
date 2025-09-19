@@ -1,54 +1,17 @@
 import { useState } from "react";
-import { Col, Form, Image, Input, Row, Tabs } from "antd";
-import QRCodeView from "./QRCodeView.js";
-import styled from "styled-components";
-import ColorPicker from "./ColorPicker.js";
-import QRFrameList from "./QRFrameList.js";
-import FileUploadComponent from "./FileUPloadComponent.js";
+import { Col, Form, Image, Row, Tabs } from "antd";
 import TextArea from "antd/es/input/TextArea.js";
-
-const TabList = styled(Tabs)`
-  &.website-tabs {
-    .ant-tabs-nav {
-      background: #f5f5f5 !important;
-      border-radius: 10px !important;
-      justify-content: space-between !important;
-      padding: 10px !important;
-      gap: 10px !important;
-    }
-    .ant-tabs-nav-wrap {
-      background: #fff !important;
-      border-radius: 10px !important;
-      padding: 0 10px !important;
-    }
-
-    .ant-tabs-content-holder {
-      background: #f5f5f5 !important;
-      padding: 10px !important;
-      border-radius: 10px !important;
-    }
-    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-      color: #1d59f9 !important;
-      background: #dde2fa !important;
-      border: 1px solid transparent !important;
-    }
-    .ant-tabs-tab-btn {
-      min-width: 52px !important;
-      background: #fff !important;
-      color: #000 !important;
-      border-radius: 10px !important;
-      border: 1px solid transparent !important;
-      padding: 6px 16px !important;
-    }
-    .ant-tabs-ink-bar {
-      display: none !important;
-    }
-  }
-`;
+import styles from "../../../../styles/HomePage.module.css";
+import ColorPicker from "./inner-tabs/ColorPicker";
+import FramePicker from "./inner-tabs/FramePicker";
+import QRCodeView from "./QRCodeView";
+import LogoPicker from "./inner-tabs/LogoPicker";
 
 const TextContent = () => {
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
+  const [selectedFrameColor, setSelectedFrameColor] = useState("#000000");
+  const [selectedBGColor, setSelectedBGColor] = useState("#ffffff");
   const [selectedSocialIcon, setSelectedSocialIcon] = useState(null);
   const [qrContent, setQrContent] = useState("");
 
@@ -66,16 +29,31 @@ const TextContent = () => {
     {
       key: "1",
       label: "Color",
-      children: <ColorPicker onColorChange={setSelectedColor} />,
+      children: (
+        <div className="flex flex-col gap-10">
+          <h4 className="bg-white text-xl p-3 rounded-xl">Color</h4>
+          <ColorPicker setColor={setSelectedColor} color={selectedColor} />
+          <h4 className="bg-white text-xl p-3 rounded-xl">Background</h4>
+          <ColorPicker setColor={setSelectedBGColor} color={selectedBGColor} />
+        </div>
+      ),
     },
     {
       key: "2",
       label: "Frame",
       children: (
-        <QRFrameList
-          selectedFrame={selectedFrame}
-          onFrameSelect={setSelectedFrame}
-        />
+        <div className="flex flex-col gap-10">
+          <h4 className="bg-white text-xl p-3 rounded-xl">Frame List</h4>
+          <FramePicker
+            selectedFrame={selectedFrame}
+            onFrameSelect={setSelectedFrame}
+          />
+          <h4 className="bg-white text-xl p-3 rounded-xl">Frame Color</h4>
+          <ColorPicker
+            setColor={setSelectedFrameColor}
+            color={selectedFrameColor}
+          />
+        </div>
       ),
     },
     {
@@ -87,7 +65,7 @@ const TextContent = () => {
       key: "4",
       label: "Logo",
       children: (
-        <FileUploadComponent
+        <LogoPicker
           onSocialIconSelect={setSelectedSocialIcon}
           selectedSocialIcon={selectedSocialIcon}
         />
@@ -95,7 +73,6 @@ const TextContent = () => {
     },
   ];
 
-  // Form içerik değişikliği
   const handleContentChange = (e) => {
     const newContent = e.target.value;
     setQrContent(newContent);
@@ -125,8 +102,8 @@ const TextContent = () => {
             </Form.Item>
           </Form>
           <div>
-            <TabList
-              className="website-tabs"
+            <Tabs
+              className={styles.designTabs}
               tabBarExtraContent={{
                 left: title,
               }}
@@ -137,8 +114,11 @@ const TextContent = () => {
         <Col span={8} style={{ padding: "10px" }}>
           <QRCodeView
             selectedFrame={selectedFrame}
-            selectedColors={selectedColor}
+            selectedBGColor={selectedBGColor}
+            selectedColor={selectedColor}
             selectedSocialIcon={selectedSocialIcon}
+            qrContent={qrContent}
+            selectedFrameColor={selectedFrameColor}
           />
         </Col>
       </Row>

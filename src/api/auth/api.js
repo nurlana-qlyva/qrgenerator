@@ -1,28 +1,24 @@
 import axios from "axios";
 
-const API_BASE = "https://qrgenerates.com"; // base URL
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
 export async function signIn(data) {
-  const res = await axios.post(
-    `${API_BASE}/api/Account/accounts/signin`,
-    data,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const res = await axios.post(`${API_BASE}/Account/accounts/signin`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   return res.data;
 }
 
 export async function continueWithGoogle({ idToken }) {
   try {
     const res = await axios.post(
-      `${API_BASE}/api/Account/continue-with-google`,
+      `${API_BASE}/Account/continue-with-google`,
       {
         idToken,
       },
-       { headers: { 'Content-Type': 'application/json' } } 
+      { headers: { "Content-Type": "application/json" } }
     );
     return res.data;
   } catch (error) {
@@ -30,4 +26,3 @@ export async function continueWithGoogle({ idToken }) {
     throw new Error("Google login failed");
   }
 }
-

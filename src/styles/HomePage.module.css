@@ -86,6 +86,76 @@
   box-shadow: 0 6px 20px rgba(29, 89, 249, 0.3);
 }
 
+.customTabs :global(.ant-tabs-nav) {
+  background: #fff !important;
+  padding: 0 10px !important;
+  border-radius: 10px !important;
+}
+
+.customTabs :global(.ant-tabs-content-holder) {
+  background: #fff !important;
+  padding: 10px !important;
+  border-radius: 10px !important;
+}
+
+.customTabs :global(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
+  color: #1d59f9 !important;
+  background: #dde2fa !important;
+  border: 1px solid transparent !important;
+}
+
+.customTabs :global(.ant-tabs-tab-btn) {
+  min-width: 52px !important;
+  background: #fff !important;
+  color: #000 !important;
+  border-radius: 10px !important;
+  border: 1px solid #e5e5e5 !important;
+  padding: 6px 16px !important;
+}
+
+.customTabs :global(.ant-tabs-ink-bar) {
+  display: none !important;
+}
+
+.designTabs :global(.ant-tabs-nav) {
+  background: #f5f5f5 !important;
+  border-radius: 10px !important;
+  justify-content: space-between !important;
+  padding: 10px !important;
+  gap: 10px !important;
+}
+
+.designTabs :global(.ant-tabs-nav-wrap) {
+  background: #fff !important;
+  border-radius: 10px !important;
+  padding: 0 10px !important;
+}
+
+.designTabs :global(.ant-tabs-content-holder) {
+  background: #f5f5f5 !important;
+  padding: 10px !important;
+  border-radius: 10px !important;
+}
+
+.designTabs :global(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
+  color: #1d59f9 !important;
+  background: #dde2fa !important;
+  border: 1px solid transparent !important;
+}
+
+.designTabs :global(.ant-tabs-tab-btn) {
+  min-width: 52px !important;
+  background: #fff !important;
+  color: #000 !important;
+  border-radius: 10px !important;
+  border: 1px solid transparent !important;
+  padding: 6px 16px !important;
+}
+
+.designTabs :global(.ant-tabs-ink-bar) {
+  display: none !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .hero {
