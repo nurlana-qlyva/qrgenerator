@@ -2,6 +2,8 @@ import { Layout } from "antd";
 import "../globals.css";
 import HeaderWrapper from "@/components/client/layout/HeaderWrapper";
 import FooterWrapper from "@/components/client/layout/FooterWrapper";
+import { AuthProvider } from "@/context/AuthCOntext";
+import { QRDesignProvider } from "@/context/QRDesignContext";
 
 export const metadata = {
   title: "Create Next App",
@@ -17,11 +19,15 @@ export default function RootLayout({ children }) {
         <meta name="google-signin-scope" content="" />
       </head>
       <body>
-        <Layout style={{ minHeight: "100vh" }}>
-          <HeaderWrapper />
-          {children}
-          <FooterWrapper />
-        </Layout>
+        <AuthProvider>
+          <QRDesignProvider>
+            <Layout style={{ minHeight: "100vh" }}>
+              <HeaderWrapper />
+              {children}
+              <FooterWrapper />
+            </Layout>
+          </QRDesignProvider>
+        </AuthProvider>
       </body>
     </html>
   );

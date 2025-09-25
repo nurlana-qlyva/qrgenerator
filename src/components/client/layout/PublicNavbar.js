@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Button, Drawer, Image, Layout, Menu, Typography } from "antd";
-import { MenuOutlined, CloseOutlined, LogoutOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import styles from "../../../styles/PublicNavbar.module.css";
 import Avatar from "./Avatar";
 import LoginModal from "../pages/login/LoginModal";
-import { continueWithGoogle } from "@/api/auth/api";
+import { useAuth } from "@/context/AuthCOntext";
 
 const { Header } = Layout;
-const { Text } = Typography;
 
 const menuItems = [
   { key: "products", label: <Link href="/products">Products</Link> },
@@ -22,35 +21,16 @@ const menuItems = [
 
 const PublicNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [user, setUser] = useState(null);
-  const loginModalRef = useRef(null);
 
-  // Check for existing auth on component mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const auth = localStorage.getItem("auth");
-        if (auth) {
-          const parsedAuth = JSON.parse(auth);
-          // Check if token is still valid
-          if (parsedAuth.expiry && Date.now() < parsedAuth.expiry) {
-            setUser(parsedAuth.user);
-          } else {
-            // Token expired, remove from localStorage
-            localStorage.removeItem("auth");
-            setUser(null);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking auth:", error);
-        localStorage.removeItem("auth");
-        setUser(null);
-      }
-    };
-
-    checkAuth();
-  }, []);
+  const {
+    user,
+    isModalOpen,
+    loginModalRef,
+    openLoginModal,
+    closeLoginModal,
+    handleLoginSuccess,
+    handleLogout,
+  } = useAuth();
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
@@ -58,23 +38,6 @@ const PublicNavbar = () => {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  const handleLoginSuccess = (userData) => {
-    setUser(userData);
-    setIsModalOpen(false);
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-
-    if (loginModalRef.current) {
-      loginModalRef.current.clearGoogleSession();
-    }
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
   };
 
   return (
@@ -104,7 +67,7 @@ const PublicNavbar = () => {
         <div className={styles.desktopUserButton}>
           <Avatar
             user={user}
-            setIsModalOpen={setIsModalOpen}
+            setIsModalOpen={openLoginModal} // Bu şekilde güncelleyin
             onLogout={handleLogout}
           />
         </div>
@@ -121,7 +84,7 @@ const PublicNavbar = () => {
         <LoginModal
           ref={loginModalRef}
           open={isModalOpen}
-          onClose={handleModalClose}
+          onClose={closeLoginModal}
           onLoginSuccess={handleLoginSuccess}
         />
       </Header>

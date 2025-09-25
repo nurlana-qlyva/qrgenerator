@@ -89,6 +89,7 @@ const QRCodeView = ({
     handleGenerate();
   }, [
     selectedFrame,
+    selectedFrameColor,
     selectedBGColor,
     selectedColor,
     selectedSocialIcon,

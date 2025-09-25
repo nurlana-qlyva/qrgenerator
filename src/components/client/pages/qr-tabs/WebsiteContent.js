@@ -1,18 +1,37 @@
-import { useState } from "react";
-import { Col, Form, Image, Input, Row, Tabs } from "antd";
+// components/WebsiteContent.js
+import { Alert, Col, Form, Image, Input, Row, Tabs } from "antd";
 import styles from "../../../../styles/HomePage.module.css";
 import ColorPicker from "./inner-tabs/ColorPicker";
 import FramePicker from "./inner-tabs/FramePicker";
 import QRCodeView from "./QRCodeView";
 import LogoPicker from "./inner-tabs/LogoPicker";
+import { useQRDesign } from "@/context/QRDesignContext";
 
 const WebsiteContent = () => {
-  const [selectedFrame, setSelectedFrame] = useState(null);
-  const [selectedBGColor, setSelectedBGColor] = useState("#ffffff");
-  const [selectedColor, setSelectedColor] = useState("#000000");
-  const [selectedFrameColor, setSelectedFrameColor] = useState("#000000");
-  const [selectedSocialIcon, setSelectedSocialIcon] = useState(null);
-  const [qrContent, setQrContent] = useState("");
+  const {
+    // State values
+    selectedFrame,
+    selectedBGColor,
+    selectedColor,
+    selectedFrameColor,
+    selectedSocialIcon,
+    qrContent,
+    inputValue,
+    showLoginAlert,
+
+    // State setters
+    setSelectedFrame,
+    setSelectedBGColor,
+    setSelectedColor,
+    setSelectedFrameColor,
+    setSelectedSocialIcon,
+    setShowLoginAlert,
+
+    // Helper functions
+    handleInputChange,
+    handleLoginClick,
+    getInputStatus,
+  } = useQRDesign();
 
   const title = (
     <div
@@ -72,11 +91,6 @@ const WebsiteContent = () => {
     },
   ];
 
-  const handleContentChange = (e) => {
-    const newContent = e.target.value;
-    setQrContent(newContent);
-  };
-
   return (
     <div style={{ background: "#fff" }}>
       <Row>
@@ -93,14 +107,28 @@ const WebsiteContent = () => {
             <h2>Enter your content</h2>
           </div>
 
+          {showLoginAlert && (
+            <Alert
+              message="Login Required"
+              description="Please login to generate QR codes for your URLs."
+              type="warning"
+              showIcon
+              closable
+              onClose={() => setShowLoginAlert(false)}
+              style={{ marginBottom: "16px" }}
+            />
+          )}
+
           <Form layout="vertical">
-            <Form.Item label="Your URL">
-              <Input
-                placeholder="https://www.qrcodegenerator.com"
-                onPressEnter={handleContentChange}
-              />
+            <Form.Item
+              label="Your URL"
+              {...getInputStatus()}
+              extra="Enter a URL like example.com or https://example.com"
+            >
+              <Input value={inputValue} onChange={handleInputChange} />
             </Form.Item>
           </Form>
+
           <div>
             <Tabs
               className={styles.designTabs}
@@ -111,6 +139,7 @@ const WebsiteContent = () => {
             />
           </div>
         </Col>
+
         <Col span={8} style={{ padding: "10px" }}>
           <QRCodeView
             selectedFrame={selectedFrame}
