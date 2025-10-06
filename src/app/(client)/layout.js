@@ -2,7 +2,7 @@ import { Layout } from "antd";
 import "../globals.css";
 import HeaderWrapper from "@/components/client/layout/HeaderWrapper";
 import FooterWrapper from "@/components/client/layout/FooterWrapper";
-import { AuthProvider } from "@/context/AuthCOntext";
+import { AuthProvider } from "@/context/AuthContext";
 import { QRDesignProvider } from "@/context/QRDesignContext";
 
 export const metadata = {

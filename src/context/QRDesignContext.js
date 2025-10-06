@@ -1,6 +1,6 @@
 "use client"
 import { createContext, useContext, useCallback, useRef, useState, useEffect } from 'react';
-import { useAuth } from "@/context/AuthCOntext";
+import { useAuth } from "@/context/AuthContext";
 
 const QRDesignContext = createContext();
 

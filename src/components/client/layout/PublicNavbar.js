@@ -7,7 +7,7 @@ import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import styles from "../../../styles/PublicNavbar.module.css";
 import Avatar from "./Avatar";
 import LoginModal from "../pages/login/LoginModal";
-import { useAuth } from "@/context/AuthCOntext";
+import { useAuth } from "@/context/AuthContext";
 
 const { Header } = Layout;
 
