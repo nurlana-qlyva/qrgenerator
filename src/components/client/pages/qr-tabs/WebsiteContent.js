@@ -6,6 +6,7 @@ import FramePicker from "./inner-tabs/FramePicker";
 import QRCodeView from "./QRCodeView";
 import LogoPicker from "./inner-tabs/LogoPicker";
 import { useQRDesign } from "@/context/QRDesignContext";
+import ShapePicker from "./inner-tabs/ShapePicker";
 
 const WebsiteContent = () => {
   const {
@@ -77,7 +78,7 @@ const WebsiteContent = () => {
     {
       key: "3",
       label: "Shape",
-      children: "Content of Tab Pane 3",
+      children: <ShapePicker />,
     },
     {
       key: "4",

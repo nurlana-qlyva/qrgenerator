@@ -7,6 +7,8 @@ import styles from "../../styles/HomePage.module.css";
 import { Content } from "antd/es/layout/layout";
 import WebsiteContent from "@/components/client/pages/qr-tabs/WebsiteContent";
 import TextContent from "@/components/client/pages/qr-tabs/TextContent";
+import VCardContent from "@/components/client/pages/qr-tabs/VCardContent";
+import WifiContent from "@/components/client/pages/qr-tabs/WifiContent";
 
 const items = [
   {
@@ -52,7 +54,22 @@ const items = [
       </div>
     ),
     key: "3",
-    children: `Content of Tab Pane 3`,
+    children: <VCardContent />,
+  },
+  {
+    label: (
+      <div className="flex items-center gap-3">
+        <Image
+          src="./icons/wifi.svg"
+          alt="qr code url"
+          preview={false}
+          width={20}
+        />
+        Wifi
+      </div>
+    ),
+    key: "4",
+    children: <WifiContent />,
   },
   {
     label: (
@@ -66,7 +83,7 @@ const items = [
         PDF
       </div>
     ),
-    key: "4",
+    key: "5",
     children: `Content of Tab Pane 4`,
   },
   {
@@ -81,7 +98,7 @@ const items = [
         Images
       </div>
     ),
-    key: "5",
+    key: "6",
     children: `Content of Tab Pane 5`,
   },
   {
@@ -96,7 +113,7 @@ const items = [
         Videos
       </div>
     ),
-    key: "6",
+    key: "7",
     children: `Content of Tab Pane 6`,
   },
 ];
