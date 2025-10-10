@@ -43,6 +43,7 @@ const QRCodeView = ({
   const socialIconPosition = selectedFrame?.socialIconPosition;
 
   const handleGenerate = async () => {
+    console.log(selectedFrame)
     const body = {
       type: 1,
       payload: {
@@ -52,7 +53,10 @@ const QRCodeView = ({
         foregroundColor: selectedColor,
         backgroundColor: selectedBGColor,
         shape: 1,
-        logoId: null,
+        // logoId: null,
+        finderStyle: 1,
+        frameForegroundColor: selectedFrameColor,
+        frameStyle: 1,
       },
     };
 
