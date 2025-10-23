@@ -1,5 +1,12 @@
-"use client"
-import { createContext, useContext, useCallback, useRef, useState, useEffect } from 'react';
+"use client";
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
 import { useAuth } from "@/context/AuthContext";
 
 const QRDesignContext = createContext();
@@ -10,9 +17,11 @@ export const QRDesignProvider = ({ children }) => {
   const [selectedColor, setSelectedColor] = useState("#000000");
   const [selectedFrameColor, setSelectedFrameColor] = useState("#989898");
   const [selectedSocialIcon, setSelectedSocialIcon] = useState(null);
+  const [socialIcons, setSocialIcons] = useState([]);
   const [qrContent, setQrContent] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [showLoginAlert, setShowLoginAlert] = useState(false);
+  const [textValue, setTextValue] = useState("");
 
   const { user, openLoginModal } = useAuth();
   const debounceTimer = useRef(null);
@@ -26,42 +35,52 @@ export const QRDesignProvider = ({ children }) => {
 
   // Debounced QR content update
   const debouncedUpdateQRContent = useCallback(
-    (value) => {
+    (value, type = "url") => {
       if (debounceTimer.current) {
         clearTimeout(debounceTimer.current);
       }
 
-      if (!isValidURLRegex(value.trim())) {
-        setQrContent("");
-        setShowLoginAlert(false);
-        return;
-      }
-
       debounceTimer.current = setTimeout(() => {
-        if (user) {
+        if (!user) {
+          setShowLoginAlert(true);
+          return;
+        }
+
+        if (type === "url") {
+          if (!isValidURLRegex(value.trim())) {
+            setQrContent("");
+            setShowLoginAlert(false);
+            return;
+          }
+
           const normalizedURL = value.startsWith("http")
             ? value
             : `https://${value}`;
           setQrContent(normalizedURL);
-          setShowLoginAlert(false);
         } else {
-          setShowLoginAlert(true);
+          // type === "text" → directly set text content
+          setQrContent(value);
         }
+
+        setShowLoginAlert(false);
       }, 1000);
     },
     [user]
   );
 
   // Input change handler
-  const handleInputChange = (e) => {
+  const handleURLChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
+    if (showLoginAlert) setShowLoginAlert(false);
+    debouncedUpdateQRContent(value, "url");
+  };
 
-    if (showLoginAlert) {
-      setShowLoginAlert(false);
-    }
-
-    debouncedUpdateQRContent(value);
+  const handleTextChange = (e) => {
+    const value = e.target.value;
+    setTextValue(value);
+    if (showLoginAlert) setShowLoginAlert(false);
+    debouncedUpdateQRContent(value, "text");
   };
 
   // Login handler
@@ -127,22 +146,27 @@ export const QRDesignProvider = ({ children }) => {
     selectedColor,
     selectedFrameColor,
     selectedSocialIcon,
+    socialIcons,
     qrContent,
     inputValue,
     showLoginAlert,
-    
+    textValue,
+
     // State setters
     setSelectedFrame,
     setSelectedBGColor,
     setSelectedColor,
     setSelectedFrameColor,
     setSelectedSocialIcon,
+    setSocialIcons,
     setQrContent,
     setInputValue,
     setShowLoginAlert,
-    
+    setTextValue,
+
     // Helper functions
-    handleInputChange,
+    handleURLChange,
+    handleTextChange,
     handleLoginClick,
     getInputStatus,
     resetDesign,
@@ -161,7 +185,7 @@ export const QRDesignProvider = ({ children }) => {
 export const useQRDesign = () => {
   const context = useContext(QRDesignContext);
   if (!context) {
-    throw new Error('useQRDesign must be used within a QRDesignProvider');
+    throw new Error("useQRDesign must be used within a QRDesignProvider");
   }
   return context;
 };

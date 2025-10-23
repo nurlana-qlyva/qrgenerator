@@ -1,61 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Image, Upload, message } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
+import { useQRDesign } from "@/context/QRDesignContext";
+import { getLogoListService } from "@/api/tabs/api";
 
 const { Dragger } = Upload;
-
-const socialIcons = [
-  {
-    name: "Facebook",
-    icon: "./socials/social_1.png",
-  },
-  {
-    name: "X (Twitter)",
-    icon: "./socials/social_2.png",
-  },
-  {
-    name: "Instagram",
-    icon: "./socials/social_3.png",
-  },
-  {
-    name: "TikTok",
-    icon: "./socials/social_4.png",
-  },
-  {
-    name: "YouTube",
-    icon: "./socials/social_5.png",
-  },
-  {
-    name: "WhatsApp",
-    icon: "./socials/social_6.png",
-  },
-  {
-    name: "LinkedIn",
-    icon: "./socials/social_7.png",
-  },
-  {
-    name: "Behance",
-    icon: "./socials/social_8.png",
-  },
-  {
-    name: "Twitch",
-    icon: "./socials/social_9.png",
-  },
-  {
-    name: "Telegram",
-    icon: "./socials/social_10.png",
-  },
-  {
-    name: "Dribbble",
-    icon: "./socials/social_11.png",
-  },
-  {
-    name: "Threads",
-    icon: "./socials/social_12.png",
-  },
-];
 
 const SocialIcon = ({ icon, name, isSelected, onClick }) => (
   <div
@@ -67,99 +18,135 @@ const SocialIcon = ({ icon, name, isSelected, onClick }) => (
     title={name}
     onClick={onClick}
   >
-    <Image src={icon} alt={`${name} qr code`} preview={false} />
+    <Image src={icon} alt={`${name} logo`} preview={false} />
   </div>
 );
 
-const LogoPicker = ({ selectedSocialIcon, onSocialIconSelect }) => {
-  const [fileList, setFileList] = useState([]);
+const LogoPicker = () => {
+  const {
+    selectedSocialIcon,
+    setSelectedSocialIcon,
+    socialIcons,
+    setSocialIcons,
+  } = useQRDesign();
+
+  const fetchLogos = async () => {
+    try {
+      const res = await getLogoListService();
+      setSocialIcons(res.items || []);
+    } catch (err) {
+      console.error("Failed to fetch logos:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchLogos();
+  }, []);
+
+  const authData = JSON.parse(localStorage.getItem("auth") || "{}");
+  const token = authData?.token;
 
   const uploadProps = {
     name: "file",
-    multiple: true,
+    multiple: false,
     accept: ".jpg,.jpeg,.png",
-    fileList,
-    onChange(info) {
-      const { status } = info.file;
-      setFileList(info.fileList);
 
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-    beforeUpload: (file) => {
+    async beforeUpload(file) {
       const isValidType =
         file.type === "image/jpeg" ||
         file.type === "image/jpg" ||
         file.type === "image/png";
       if (!isValidType) {
-        message.error("You can only upload JPG, JPEG & PNG files!");
+        message.error("Only JPG, JPEG & PNG files are allowed!");
         return false;
       }
+
       const isLt5M = file.size / 1024 / 1024 < 5;
       if (!isLt5M) {
-        message.error("Image must smaller than 5MB!");
+        message.error("Image must be smaller than 5MB!");
         return false;
       }
-      return false; // Prevent automatic upload
-    },
-    onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
+
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch(
+          "https://qrgenerates.com/api/QRCodeLogo/upload",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
+
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Upload failed response:", text);
+          throw new Error("Failed to upload image to server");
+        }
+
+        let data = null;
+        try {
+          const text = await res.text();
+          data = text ? JSON.parse(text) : {};
+        } catch (parseError) {
+          console.warn("⚠️ Response is not valid JSON or empty.");
+        }
+
+        message.success("Image uploaded successfully!");
+        console.log("✅ Server response:", data);
+
+        fetchLogos();
+      } catch (error) {
+        console.error("❌ Upload error:", error);
+        message.error("Failed to upload image.");
+      }
+
+      return false;
     },
   };
 
   const handleSocialIconClick = (social) => {
-    // Aynı ikona tekrar tıklanırsa seçimi kaldır
     if (selectedSocialIcon?.name === social.name) {
-      onSocialIconSelect(null);
-    } else {
-      onSocialIconSelect(social);
-    }
+      setSelectedSocialIcon(social.id);
+    } 
   };
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6 bg-gray-50 rounded-lg">
-      {/* Social Media Icons */}
+      {/* Mevcut Sosyal Medya Logoları */}
       <div className="mb-4">
         <h4 className="text-sm font-medium text-gray-700 mb-3">
           Choose Social Media Icon:
         </h4>
         <div className="flex flex-wrap gap-3 justify-center mb-8">
-          {socialIcons.map((social, index) => (
+          {(socialIcons || []).map((social) => (
             <SocialIcon
-              key={index}
-              icon={social.icon}
-              name={social.name}
-              isSelected={selectedSocialIcon?.name === social.name}
+              key={social.id}
+              icon={social.fileURL}
+              name={social.id}
+              isSelected={selectedSocialIcon?.name === social.id}
               onClick={() => handleSocialIconClick(social)}
             />
           ))}
         </div>
       </div>
 
-      <div className="w-full max-w-2xl mx-auto p-4 bg-white border-2 border-blue-400 rounded-lg">
-        {/* File Upload Area */}
-        <Dragger
-          {...uploadProps}
-          className="bg-gray-50 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors"
-          style={{
-            background: "#f8f9fa",
-            border: "2px dashed #cbd5e1",
-          }}
-        >
+      {/* Upload Alanı */}
+      <div className="w-full mx-auto p-4 bg-white border-2 border-blue-400 rounded-lg">
+        <Dragger {...uploadProps}>
           <div className="flex flex-col items-center justify-center py-12">
-            <DownloadOutlined className="text-4xl text-blue mb-4" />
+            <UploadOutlined className="text-4xl text-blue-500 mb-4" />
             <p className="text-lg text-gray-700 mb-2 font-medium">
-              Drag your file(s) to start uploading
+              Drag or click to upload your icon
             </p>
           </div>
         </Dragger>
-
-        {/* File Type Info */}
         <p className="text-sm text-gray-500 mt-3 ml-1">
-          Only support .jpg, .jpeg and .png files
+          Only .jpg, .jpeg, and .png files (max 5MB)
         </p>
       </div>
     </div>

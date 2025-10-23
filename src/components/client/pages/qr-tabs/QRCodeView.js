@@ -1,104 +1,15 @@
 "use client";
 
-import { getQRCodeService } from "@/api/tabs/api";
+import { useQRDesign } from "@/context/QRDesignContext";
 import { Image } from "antd";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-const QRCodeView = ({
-  selectedFrame,
-  selectedBGColor,
-  selectedColor,
-  selectedFrameColor,
-  selectedSocialIcon,
-  qrContent,
-}) => {
+const QRCodeView = ({ qrBase64 }) => {
   const [selectedFormat, setSelectedFormat] = useState("PNG");
   const [selectedSize, setSelectedSize] = useState("1000px");
-  const [qrBase64, setQrBase64] = useState(null);
 
-  // Frame'e göre QR kod pozisyonunu belirle
-  const getQRPosition = () => {
-    if (!selectedFrame) {
-      return {
-        size: 150,
-        top: "10%",
-        left: "2%",
-        scale: 1,
-      };
-    }
-
-    // Frame metadata'sından pozisyon bilgilerini al
-    const framePosition = selectedFrame.qrPosition || {};
-
-    return {
-      size: framePosition.size || 120,
-      top: framePosition.top || "0%",
-      left: framePosition.left || "50%",
-      scale: framePosition.scale || 1,
-    };
-  };
-
-  const qrPosition = getQRPosition();
-  const socialIconPosition = selectedFrame?.socialIconPosition;
-
-  const handleGenerate = async () => {
-    console.log(selectedFrame)
-    const body = {
-      type: 1,
-      payload: {
-        Url: qrContent,
-      },
-      designOptions: {
-        foregroundColor: selectedColor,
-        backgroundColor: selectedBGColor,
-        shape: 1,
-        // logoId: null,
-        finderStyle: 1,
-        frameForegroundColor: selectedFrameColor,
-        frameStyle: 1,
-      },
-    };
-
-    try {
-      const res = await getQRCodeService(body);
-      console.log("QR Code Response:", res);
-
-      if (res?.qrCodeBase64) {
-        setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
-        console.log("QR Code generated successfully!");
-      } else {
-        throw new Error("Invalid response format");
-      }
-
-      return res;
-    } catch (error) {
-      console.error("Generate QR Error:", error);
-
-      if (
-        error.message.includes("authentication") ||
-        error.message.includes("token")
-      ) {
-        alert("Please login again to continue.");
-      } else {
-        alert(`Error: ${error.message}`);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (!qrContent || !selectedBGColor || !selectedColor) {
-      return;
-    }
-    handleGenerate();
-  }, [
-    selectedFrame,
-    selectedFrameColor,
-    selectedBGColor,
-    selectedColor,
-    selectedSocialIcon,
-    qrContent,
-  ]);
+  const { selectedBGColor, selectedColor, qrContent } = useQRDesign();
 
   const handleDownload = async () => {
     const API_BASE = "https://qrgenerates.com";
@@ -148,37 +59,12 @@ const QRCodeView = ({
         <div className="relative">
           <div className="bg-white rounded-2xl p-6 shadow-lg">
             <div className="w-48 h-48 mx-auto relative flex items-center justify-center">
-              {/* Frame Background - En altta */}
-              {selectedFrame && (
-                <img
-                  src={selectedFrame.frame}
-                  alt={`QR Frame ${selectedFrame.id}`}
-                  className="absolute inset-0 w-full h-full object-contain z-10"
-                  style={{
-                    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
-                    top: "0%",
-                    left: "-10%",
-                  }}
-                />
-              )}
-
               {/* QR Code - Dinamik pozisyonlama */}
               {qrBase64 ? (
-                <div
-                  className="absolute z-20"
-                  style={{
-                    top: qrPosition.top,
-                    left: qrPosition.left,
-                    transform: `${qrPosition.transform} 
-                             scale(${qrPosition.scale})`,
-                    transformOrigin: "center",
-                  }}
-                >
+                <div>
                   <Image
                     src={qrBase64}
                     alt="Generated QR"
-                    width={qrPosition.size}
-                    height={qrPosition.size}
                     preview={false}
                     style={{
                       objectFit: "contain",
@@ -187,41 +73,7 @@ const QRCodeView = ({
                   />
                 </div>
               ) : (
-                <div
-                  className="absolute z-20"
-                  style={{
-                    top: qrPosition.top,
-                    left: qrPosition.left,
-                    transform: `${qrPosition.transform} 
-                             scale(${qrPosition.scale})`,
-                    transformOrigin: "center",
-                  }}
-                ></div>
-              )}
-
-              {/* Social Media Icon - QR kodun tam ortasında */}
-              {selectedSocialIcon && (
-                <div
-                  className="absolute z-30 flex items-center justify-center"
-                  style={{
-                    top: socialIconPosition?.top,
-                    left: socialIconPosition?.left,
-                    translate: socialIconPosition?.transform,
-                    width: "40px",
-                    height: "40px",
-                  }}
-                >
-                  <Image
-                    src={selectedSocialIcon.icon}
-                    alt={`${selectedSocialIcon.name} icon`}
-                    width={40}
-                    height={40}
-                    preview={false}
-                    style={{
-                      objectFit: "contain",
-                    }}
-                  />
-                </div>
+                <div></div>
               )}
             </div>
           </div>

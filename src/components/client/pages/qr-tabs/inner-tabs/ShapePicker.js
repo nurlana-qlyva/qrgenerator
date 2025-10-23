@@ -19,17 +19,10 @@ const eyeFrameShapes = [
   { id: 7, src: "/shapes/frame_shape_7.svg" },
 ];
 
-const centerShapes = [
-  { id: 1, src: "/shapes/eye_center_1.svg" },
-  { id: 2, src: "/shapes/eye_center_2.svg" },
-  { id: 3, src: "/shapes/eye_center_3.svg" },
-  { id: 4, src: "/shapes/eye_center_4.svg" },
-];
 
 export default function ShapePicker() {
   const [selectedBody, setSelectedBody] = useState(1);
   const [selectedFrame, setSelectedFrame] = useState(2);
-  const [selectedCenter, setSelectedCenter] = useState(null);
 
   return (
     <div className="w-full max-w-xl mx-auto p-6 bg-white rounded-xl shadow">
@@ -76,32 +69,6 @@ export default function ShapePicker() {
               <img
                 src={shape.src}
                 alt={`eye-frame-${shape.id}`}
-                className="w-7 h-7 object-contain"
-              />
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Eye frame center shape */}
-      <div>
-        <h3 className="text-sm font-medium text-gray-700 mb-2">
-          Eye frame center shape
-        </h3>
-        <div className="flex gap-3 bg-gray-50 p-3 rounded-lg">
-          {centerShapes.map((shape) => (
-            <button
-              key={shape.id}
-              onClick={() => setSelectedCenter(shape.id)}
-              className={`${
-                selectedCenter === shape.id
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-transparent hover:bg-gray-100"
-              } w-12 h-12 flex items-center justify-center rounded-md border transition`}
-            >
-              <img
-                src={shape.src}
-                alt={`eye-center-${shape.id}`}
                 className="w-7 h-7 object-contain"
               />
             </button>

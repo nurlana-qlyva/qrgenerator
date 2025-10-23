@@ -1,19 +1,94 @@
-import { useState } from "react";
-import { Col, Form, Image, Row, Tabs } from "antd";
+import { useEffect, useState } from "react";
+import { Alert, Col, Form, Image, Row, Tabs } from "antd";
 import TextArea from "antd/es/input/TextArea.js";
 import styles from "../../../../styles/HomePage.module.css";
 import ColorPicker from "./inner-tabs/ColorPicker";
 import FramePicker from "./inner-tabs/FramePicker";
 import QRCodeView from "./QRCodeView";
 import LogoPicker from "./inner-tabs/LogoPicker";
+import { useQRDesign } from "@/context/QRDesignContext";
+import ShapePicker from "./inner-tabs/ShapePicker";
+import { getQRCodeService } from "@/api/tabs/api";
 
 const TextContent = () => {
-  const [selectedFrame, setSelectedFrame] = useState(null);
-  const [selectedColor, setSelectedColor] = useState("");
-  const [selectedFrameColor, setSelectedFrameColor] = useState("#000000");
-  const [selectedBGColor, setSelectedBGColor] = useState("#ffffff");
-  const [selectedSocialIcon, setSelectedSocialIcon] = useState(null);
-  const [qrContent, setQrContent] = useState("");
+  const [qrBase64, setQrBase64] = useState(null);
+  const {
+    // State values
+    showLoginAlert,
+    selectedColor,
+    setSelectedColor,
+    selectedFrameColor,
+    setSelectedFrameColor,
+    selectedBGColor,
+    setSelectedBGColor,
+    qrContent,
+    selectedFrame,
+    selectedSocialIcon,
+    textValue,
+
+    // State setters
+    setShowLoginAlert,
+
+    // Helper functions
+    handleTextChange,
+  } = useQRDesign();
+
+  const handleGenerate = async () => {
+    const body = {
+      type: 2,
+      payload: {
+        Text: textValue,
+      },
+      designOptions: {
+        foregroundColor: selectedColor,
+        backgroundColor: selectedBGColor,
+        shape: 1,
+        logoId: selectedSocialIcon,
+        finderStyle: 1,
+        frameForegroundColor: selectedFrameColor,
+        frameStyle: selectedFrame?.id || 0,
+      },
+    };
+
+    try {
+      const res = await getQRCodeService(body);
+      console.log("QR Code Response:", res);
+
+      if (res?.qrCodeBase64) {
+        setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
+        console.log("QR Code generated successfully!");
+      } else {
+        throw new Error("Invalid response format");
+      }
+
+      return res;
+    } catch (error) {
+      console.error("Generate QR Error:", error);
+
+      if (
+        error.message.includes("authentication") ||
+        error.message.includes("token")
+      ) {
+        alert("Please login again to continue.");
+      } else {
+        alert(`Error: ${error.message}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!qrContent || !selectedBGColor || !selectedColor) {
+      return;
+    }
+    handleGenerate();
+  }, [
+    selectedFrame,
+    selectedFrameColor,
+    selectedBGColor,
+    selectedColor,
+    selectedSocialIcon,
+    qrContent,
+  ]);
 
   const title = (
     <div
@@ -32,9 +107,9 @@ const TextContent = () => {
       children: (
         <div className="flex flex-col gap-10">
           <h4 className="bg-white text-xl p-3 rounded-xl">Color</h4>
-          <ColorPicker setColor={setSelectedColor} color={selectedColor} />
+          <ColorPicker color={selectedColor} setColor={setSelectedColor} />
           <h4 className="bg-white text-xl p-3 rounded-xl">Background</h4>
-          <ColorPicker setColor={setSelectedBGColor} color={selectedBGColor} />
+          <ColorPicker color={selectedBGColor} setColor={setSelectedBGColor} />
         </div>
       ),
     },
@@ -44,14 +119,11 @@ const TextContent = () => {
       children: (
         <div className="flex flex-col gap-10">
           <h4 className="bg-white text-xl p-3 rounded-xl">Frame List</h4>
-          <FramePicker
-            selectedFrame={selectedFrame}
-            onFrameSelect={setSelectedFrame}
-          />
+          <FramePicker />
           <h4 className="bg-white text-xl p-3 rounded-xl">Frame Color</h4>
           <ColorPicker
-            setColor={setSelectedFrameColor}
             color={selectedFrameColor}
+            setColor={setSelectedFrameColor}
           />
         </div>
       ),
@@ -59,24 +131,14 @@ const TextContent = () => {
     {
       key: "3",
       label: "Shape",
-      children: "Content of Tab Pane 3",
+      children: <ShapePicker />,
     },
     {
       key: "4",
       label: "Logo",
-      children: (
-        <LogoPicker
-          onSocialIconSelect={setSelectedSocialIcon}
-          selectedSocialIcon={selectedSocialIcon}
-        />
-      ),
+      children: <LogoPicker />,
     },
   ];
-
-  const handleContentChange = (e) => {
-    const newContent = e.target.value;
-    setQrContent(newContent);
-  };
 
   return (
     <div style={{ background: "#fff" }}>
@@ -93,12 +155,22 @@ const TextContent = () => {
             <Image src="./icons/content.svg" alt="qr code content" width={20} />
             <h2>Enter your content</h2>
           </div>
+
+          {showLoginAlert && (
+            <Alert
+              message="Login Required"
+              description="Please login to generate QR codes for your URLs."
+              type="warning"
+              showIcon
+              closable
+              onClose={() => setShowLoginAlert(false)}
+              style={{ marginBottom: "16px" }}
+            />
+          )}
+
           <Form layout="vertical">
             <Form.Item label="Your text">
-              <TextArea
-                placeholder="Type your text"
-                onChange={handleContentChange}
-              />
+              <TextArea value={textValue} onChange={handleTextChange} />
             </Form.Item>
           </Form>
           <div>
@@ -112,14 +184,7 @@ const TextContent = () => {
           </div>
         </Col>
         <Col span={8} style={{ padding: "10px" }}>
-          <QRCodeView
-            selectedFrame={selectedFrame}
-            selectedBGColor={selectedBGColor}
-            selectedColor={selectedColor}
-            selectedSocialIcon={selectedSocialIcon}
-            qrContent={qrContent}
-            selectedFrameColor={selectedFrameColor}
-          />
+          <QRCodeView qrBase64={qrBase64} />
         </Col>
       </Row>
     </div>
