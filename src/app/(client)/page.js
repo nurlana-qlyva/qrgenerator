@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState } from "react"; // Import React and useState
 import Link from "next/link";
 import { Button, Image, Tabs } from "antd";
 import styles from "../../styles/HomePage.module.css";
@@ -9,119 +10,125 @@ import WebsiteContent from "@/components/client/pages/qr-tabs/WebsiteContent";
 import TextContent from "@/components/client/pages/qr-tabs/TextContent";
 import VCardContent from "@/components/client/pages/qr-tabs/VCardContent";
 import WifiContent from "@/components/client/pages/qr-tabs/WifiContent";
-
-const items = [
-  {
-    label: (
-      <div className="flex items-center gap-3">
-        <Image
-          src="./icons/www.svg"
-          alt="qr code url"
-          preview={false}
-          width={20}
-        />
-        Website
-      </div>
-    ),
-    key: "1",
-    children: <WebsiteContent />,
-  },
-  {
-    label: (
-      <div className="flex items-center gap-3">
-        <Image
-          src="./icons/letter.svg"
-          alt="qr code url"
-          preview={false}
-          width={20}
-        />
-        Text
-      </div>
-    ),
-    key: "2",
-    children: <TextContent />,
-  },
-  {
-    label: (
-      <div className="flex items-center gap-3">
-        <Image
-          src="./icons/id.svg"
-          alt="qr code url"
-          preview={false}
-          width={20}
-        />
-        VCard
-      </div>
-    ),
-    key: "3",
-    children: <VCardContent />,
-  },
-  {
-    label: (
-      <div className="flex items-center gap-3">
-        <Image
-          src="./icons/wifi.svg"
-          alt="qr code url"
-          preview={false}
-          width={20}
-        />
-        Wifi
-      </div>
-    ),
-    key: "4",
-    children: <WifiContent />,
-  },
-  {
-    label: (
-      <div className="flex items-center gap-3">
-        <Image
-          src="./icons/pdf.svg"
-          alt="qr code url"
-          preview={false}
-          width={20}
-        />
-        PDF
-      </div>
-    ),
-    key: "5",
-    children: `Content of Tab Pane 4`,
-  },
-  {
-    label: (
-      <div className="flex items-center gap-3">
-        <Image
-          src="./icons/picture.svg"
-          alt="qr code url"
-          preview={false}
-          width={20}
-        />
-        Images
-      </div>
-    ),
-    key: "6",
-    children: `Content of Tab Pane 5`,
-  },
-  {
-    label: (
-      <div className="flex items-center gap-3">
-        <Image
-          src="./icons/video.svg"
-          alt="qr code url"
-          preview={false}
-          width={20}
-        />
-        Videos
-      </div>
-    ),
-    key: "7",
-    children: `Content of Tab Pane 6`,
-  },
-];
+import { useQRDesign } from "@/context/QRDesignContext";
 
 export default function Home() {
+  const [tabKey, setTabKey] = useState("1"); // Note: changed setTabkey to setTabKey (capital K)
+  const { resetAll } = useQRDesign();
+
   const onChange = (key) => {
     console.log(key);
+    setTabKey(key); // Changed to setTabKey
+    resetAll();
   };
+
+  const items = [
+    {
+      label: (
+        <div className="flex items-center gap-3">
+          <Image
+            src="./icons/www.svg"
+            alt="qr code url"
+            preview={false}
+            width={20}
+          />
+          Website
+        </div>
+      ),
+      key: "1",
+      children: <WebsiteContent key={tabKey} tabKey={tabKey} />,
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3">
+          <Image
+            src="./icons/letter.svg"
+            alt="qr code url"
+            preview={false}
+            width={20}
+          />
+          Text
+        </div>
+      ),
+      key: "2",
+      children: <TextContent key={tabKey} tabKey={tabKey} />,
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3">
+          <Image
+            src="./icons/id.svg"
+            alt="qr code url"
+            preview={false}
+            width={20}
+          />
+          VCard
+        </div>
+      ),
+      key: "3",
+      children: <VCardContent key={tabKey} />,
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3">
+          <Image
+            src="./icons/wifi.svg"
+            alt="qr code url"
+            preview={false}
+            width={20}
+          />
+          Wifi
+        </div>
+      ),
+      key: "4",
+      children: <WifiContent key={tabKey} />,
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3">
+          <Image
+            src="./icons/pdf.svg"
+            alt="qr code url"
+            preview={false}
+            width={20}
+          />
+          PDF
+        </div>
+      ),
+      key: "5",
+      children: `Content of Tab Pane 4`,
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3">
+          <Image
+            src="./icons/picture.svg"
+            alt="qr code url"
+            preview={false}
+            width={20}
+          />
+          Images
+        </div>
+      ),
+      key: "6",
+      children: `Content of Tab Pane 5`,
+    },
+    {
+      label: (
+        <div className="flex items-center gap-3">
+          <Image
+            src="./icons/video.svg"
+            alt="qr code url"
+            preview={false}
+            width={20}
+          />
+          Videos
+        </div>
+      ),
+      key: "7",
+      children: `Content of Tab Pane 6`,
+    },
+  ];
 
   return (
     <Content className={styles.content}>
@@ -158,8 +165,8 @@ export default function Home() {
 
       <div className={styles.tab}>
         <Tabs
-          defaultActiveKey="1"
-          destroyInactiveTabPane
+          activeKey={tabKey}
+          destroyInactiveTabPane={true}
           onChange={onChange}
           items={items}
           tabBarGutter={4}

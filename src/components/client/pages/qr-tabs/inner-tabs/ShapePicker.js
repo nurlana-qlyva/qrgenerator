@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useQRDesign } from "@/context/QRDesignContext";
 
 const bodyShapes = [
   { id: 1, src: "/shapes/body_shape_1.svg" },
@@ -21,8 +21,12 @@ const eyeFrameShapes = [
 
 
 export default function ShapePicker() {
-  const [selectedBody, setSelectedBody] = useState(1);
-  const [selectedFrame, setSelectedFrame] = useState(2);
+  const {
+    selectedFinder,
+    selectedShape,
+    setSelectedFinder,
+    setSelectedShape
+  } = useQRDesign();
 
   return (
     <div className="w-full max-w-xl mx-auto p-6 bg-white rounded-xl shadow">
@@ -33,9 +37,9 @@ export default function ShapePicker() {
           {bodyShapes.map((shape) => (
             <button
               key={shape.id}
-              onClick={() => setSelectedBody(shape.id)}
+              onClick={() => setSelectedShape(shape.id)}
               className={`${
-                selectedBody === shape.id
+                selectedShape === shape.id
                   ? "border-blue-500 bg-blue-50"
                   : "border-transparent hover:bg-gray-100"
               } w-12 h-12 flex items-center justify-center rounded-md border transition`}
@@ -59,9 +63,9 @@ export default function ShapePicker() {
           {eyeFrameShapes.map((shape) => (
             <button
               key={shape.id}
-              onClick={() => setSelectedFrame(shape.id)}
+              onClick={() => setSelectedFinder(shape.id)}
               className={`${
-                selectedFrame === shape.id
+                selectedFinder === shape.id
                   ? "border-blue-500 bg-blue-50"
                   : "border-transparent hover:bg-gray-100"
               } w-12 h-12 flex items-center justify-center rounded-md border transition`}

@@ -9,7 +9,7 @@ import { useQRDesign } from "@/context/QRDesignContext";
 import ShapePicker from "./inner-tabs/ShapePicker";
 import { getQRCodeService } from "@/api/tabs/api";
 
-const WebsiteContent = () => {
+const WebsiteContent = ({ tabKey }) => {
   const [qrBase64, setQrBase64] = useState(null);
   const {
     // State values
@@ -24,6 +24,8 @@ const WebsiteContent = () => {
     qrContent,
     selectedFrame,
     selectedSocialIcon,
+    selectedShape,
+    selectedFinder,
 
     // State setters
     setShowLoginAlert,
@@ -37,14 +39,14 @@ const WebsiteContent = () => {
     const body = {
       type: 1,
       payload: {
-        Url: qrContent,
+        Url: inputValue,
       },
       designOptions: {
         foregroundColor: selectedColor,
         backgroundColor: selectedBGColor,
-        shape: 1,
+        shape: selectedShape,
         logoId: selectedSocialIcon,
-        finderStyle: 1,
+        finderStyle: selectedFinder,
         frameForegroundColor: selectedFrameColor,
         frameStyle: selectedFrame?.id || 0,
       },
@@ -52,19 +54,15 @@ const WebsiteContent = () => {
 
     try {
       const res = await getQRCodeService(body);
-      console.log("QR Code Response:", res);
 
       if (res?.qrCodeBase64) {
         setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
-        console.log("QR Code generated successfully!");
       } else {
         throw new Error("Invalid response format");
       }
 
       return res;
     } catch (error) {
-      console.error("Generate QR Error:", error);
-
       if (
         error.message.includes("authentication") ||
         error.message.includes("token")
@@ -88,6 +86,8 @@ const WebsiteContent = () => {
     selectedColor,
     selectedSocialIcon,
     qrContent,
+    selectedShape,
+    selectedFinder,
   ]);
 
   const title = (

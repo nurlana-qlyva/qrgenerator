@@ -22,6 +22,8 @@ export const QRDesignProvider = ({ children }) => {
   const [inputValue, setInputValue] = useState("");
   const [showLoginAlert, setShowLoginAlert] = useState(false);
   const [textValue, setTextValue] = useState("");
+  const [selectedShape, setSelectedShape] = useState(0);
+  const [selectedFinder, setSelectedFinder] = useState(0);
 
   const { user, openLoginModal } = useAuth();
   const debounceTimer = useRef(null);
@@ -58,7 +60,6 @@ export const QRDesignProvider = ({ children }) => {
             : `https://${value}`;
           setQrContent(normalizedURL);
         } else {
-          // type === "text" → directly set text content
           setQrContent(value);
         }
 
@@ -109,6 +110,8 @@ export const QRDesignProvider = ({ children }) => {
     setSelectedColor("#000000");
     setSelectedFrameColor("#989898");
     setSelectedSocialIcon(null);
+    setSelectedShape(0);
+    setSelectedFinder(0);
   };
 
   // Reset all states
@@ -116,6 +119,7 @@ export const QRDesignProvider = ({ children }) => {
     resetDesign();
     setQrContent("");
     setInputValue("");
+    setTextValue("");
     setShowLoginAlert(false);
   };
 
@@ -151,6 +155,8 @@ export const QRDesignProvider = ({ children }) => {
     inputValue,
     showLoginAlert,
     textValue,
+    selectedFinder,
+    selectedShape,
 
     // State setters
     setSelectedFrame,
@@ -163,6 +169,8 @@ export const QRDesignProvider = ({ children }) => {
     setInputValue,
     setShowLoginAlert,
     setTextValue,
+    setSelectedFinder,
+    setSelectedShape,
 
     // Helper functions
     handleURLChange,

@@ -11,6 +11,20 @@ export async function signIn(data) {
   return res.data;
 }
 
+
+export const refreshAccessToken = async (refreshToken) => {
+  try {
+    const res = await axios.post("${API_BASE}/Account/refresh-signin", {
+      refreshToken,
+    });
+
+    return res.data;
+  } catch (error) {
+    console.error("Token refresh failed:", error);
+    return null;
+  }
+};
+
 export async function continueWithGoogle({ idToken }) {
   try {
     const res = await axios.post(

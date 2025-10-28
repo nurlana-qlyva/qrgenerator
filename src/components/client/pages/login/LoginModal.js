@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Modal } from "antd";
 import { Eye, EyeOff } from "lucide-react";
 import GoogleLogin from "./GoogleLogin";
-import { signIn } from "@/api/auth/api";
+import { signIn, refreshAccessToken } from "@/api/auth/api";
+import jwt_decode from "jwt-decode"; 
 
 const LoginModal = ({ open, onClose, onLoginSuccess }) => {
   const {
@@ -16,6 +17,34 @@ const LoginModal = ({ open, onClose, onLoginSuccess }) => {
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
 
+  // --- 🧠 Helper to schedule token refresh ---
+  const scheduleTokenRefresh = (refreshToken) => {
+    // Refresh 1 minute before expiry (59 minutes after login)
+    const refreshTime = 59 * 60 * 1000;
+    setTimeout(async () => {
+      const newTokens = await refreshAccessToken(refreshToken);
+      if (newTokens?.accessToken) {
+        const expiry = Date.now() + 60 * 60 * 1000;
+        const decoded = jwt_decode(newTokens.accessToken);
+        localStorage.setItem(
+          "auth",
+          JSON.stringify({
+            token: newTokens.accessToken,
+            refreshToken: newTokens.refreshToken || refreshToken,
+            expiry,
+            user: decoded,
+          })
+        );
+        console.log("🔁 Token refreshed successfully!");
+        scheduleTokenRefresh(newTokens.refreshToken || refreshToken); // Reschedule again
+      } else {
+        console.error("❌ Token refresh failed, clearing auth");
+        localStorage.removeItem("auth");
+        window.location.href = "/login";
+      }
+    }, refreshTime);
+  };
+
   const onSubmit = async (data) => {
     const res = await signIn(data);
     if (res.accessToken) {
@@ -23,10 +52,14 @@ const LoginModal = ({ open, onClose, onLoginSuccess }) => {
       const token = res.accessToken;
       const refreshToken = res.refreshToken;
       const decoded = jwt_decode(token);
+
       localStorage.setItem(
         "auth",
         JSON.stringify({ token, refreshToken, expiry, user: decoded })
       );
+
+      // ⏱️ Start automatic token refresh timer
+      scheduleTokenRefresh(refreshToken);
 
       reset();
       onClose();
@@ -42,6 +75,40 @@ const LoginModal = ({ open, onClose, onLoginSuccess }) => {
     setShowPassword(false);
     onClose();
   };
+
+  // 🪄 If user already logged in, resume refresh timer on component mount
+  useEffect(() => {
+    const auth = JSON.parse(localStorage.getItem("auth"));
+    if (auth?.refreshToken) {
+      const now = Date.now();
+      if (now < auth.expiry) {
+        // still valid
+        scheduleTokenRefresh(auth.refreshToken);
+      } else {
+        // token expired, try refreshing immediately
+        refreshAccessToken(auth.refreshToken).then((newTokens) => {
+          if (newTokens?.accessToken) {
+            const expiry = Date.now() + 60 * 60 * 1000;
+            const decoded = jwt_decode(newTokens.accessToken);
+            localStorage.setItem(
+              "auth",
+              JSON.stringify({
+                token: newTokens.accessToken,
+                refreshToken: newTokens.refreshToken || auth.refreshToken,
+                expiry,
+                user: decoded,
+              })
+            );
+            scheduleTokenRefresh(
+              newTokens.refreshToken || auth.refreshToken
+            );
+          } else {
+            localStorage.removeItem("auth");
+          }
+        });
+      }
+    }
+  }, []);
 
   return (
     <Modal open={open} onCancel={handleModalClose} footer={null} title="Login">
@@ -67,9 +134,7 @@ const LoginModal = ({ open, onClose, onLoginSuccess }) => {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                {...register("password", {
-                  required: "Password is required",
-                })}
+                {...register("password", { required: "Password is required" })}
                 placeholder="••••••••"
                 className="mt-1 w-full rounded-md border px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
               />

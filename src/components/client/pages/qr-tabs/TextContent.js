@@ -10,7 +10,7 @@ import { useQRDesign } from "@/context/QRDesignContext";
 import ShapePicker from "./inner-tabs/ShapePicker";
 import { getQRCodeService } from "@/api/tabs/api";
 
-const TextContent = () => {
+const TextContent = ({ tabKey }) => {
   const [qrBase64, setQrBase64] = useState(null);
   const {
     // State values
@@ -25,6 +25,8 @@ const TextContent = () => {
     selectedFrame,
     selectedSocialIcon,
     textValue,
+    selectedShape,
+    selectedFinder,
 
     // State setters
     setShowLoginAlert,
@@ -42,36 +44,38 @@ const TextContent = () => {
       designOptions: {
         foregroundColor: selectedColor,
         backgroundColor: selectedBGColor,
-        shape: 1,
+        shape: selectedShape,
         logoId: selectedSocialIcon,
-        finderStyle: 1,
+        finderStyle: selectedFinder,
         frameForegroundColor: selectedFrameColor,
         frameStyle: selectedFrame?.id || 0,
       },
     };
 
-    try {
-      const res = await getQRCodeService(body);
-      console.log("QR Code Response:", res);
+    if (!!textValue) {
+      try {
+        const res = await getQRCodeService(body);
+        console.log("QR Code Response:", res);
 
-      if (res?.qrCodeBase64) {
-        setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
-        console.log("QR Code generated successfully!");
-      } else {
-        throw new Error("Invalid response format");
-      }
+        if (res?.qrCodeBase64) {
+          setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
+          console.log("QR Code generated successfully!");
+        } else {
+          throw new Error("Invalid response format");
+        }
 
-      return res;
-    } catch (error) {
-      console.error("Generate QR Error:", error);
+        return res;
+      } catch (error) {
+        console.error("Generate QR Error:", error);
 
-      if (
-        error.message.includes("authentication") ||
-        error.message.includes("token")
-      ) {
-        alert("Please login again to continue.");
-      } else {
-        alert(`Error: ${error.message}`);
+        if (
+          error.message.includes("authentication") ||
+          error.message.includes("token")
+        ) {
+          alert("Please login again to continue.");
+        } else {
+          alert(`Error: ${error.message}`);
+        }
       }
     }
   };
