@@ -4,6 +4,7 @@ import HeaderWrapper from "@/components/client/layout/HeaderWrapper";
 import FooterWrapper from "@/components/client/layout/FooterWrapper";
 import { AuthProvider } from "@/context/AuthContext";
 import { QRDesignProvider } from "@/context/QRDesignContext";
+import { ContactProvider } from "@/context/ContactCardContext";
 
 export const metadata = {
   title: "Create Next App",
@@ -21,11 +22,13 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <QRDesignProvider>
-            <Layout style={{ minHeight: "100vh" }}>
-              <HeaderWrapper />
-              {children}
-              <FooterWrapper />
-            </Layout>
+            <ContactProvider>
+              <Layout style={{ minHeight: "100vh" }}>
+                <HeaderWrapper />
+                {children}
+                <FooterWrapper />
+              </Layout>
+            </ContactProvider>
           </QRDesignProvider>
         </AuthProvider>
       </body>

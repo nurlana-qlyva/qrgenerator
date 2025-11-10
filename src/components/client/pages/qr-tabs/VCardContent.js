@@ -7,14 +7,37 @@ import FramePicker from "./inner-tabs/FramePicker";
 import QRCodeView from "./QRCodeView";
 import LogoPicker from "./inner-tabs/LogoPicker";
 import { useState } from "react";
+import ContactCard from "./inner-tabs/ContactCard";
+import { useContact } from "@/context/ContactCardContext";
+import { useQRDesign } from "@/context/QRDesignContext";
+import ShapePicker from "./inner-tabs/ShapePicker";
 
 export default function VCardContent() {
-  const [selectedFrame, setSelectedFrame] = useState(null);
-  const [selectedColor, setSelectedColor] = useState("");
-  const [selectedFrameColor, setSelectedFrameColor] = useState("#000000");
-  const [selectedBGColor, setSelectedBGColor] = useState("#ffffff");
-  const [selectedSocialIcon, setSelectedSocialIcon] = useState(null);
-  const [qrContent, setQrContent] = useState("");
+  const [qrBase64, setQrBase64] = useState(null);
+  const {
+    // State values
+    showLoginAlert,
+    selectedColor,
+    setSelectedColor,
+    selectedFrameColor,
+    setSelectedFrameColor,
+    selectedBGColor,
+    setSelectedBGColor,
+    qrContent,
+    selectedFrame,
+    selectedSocialIcon,
+    selectedShape,
+    selectedFinder,
+
+    // State setters
+    setShowLoginAlert,
+  } = useQRDesign();
+
+  const { formData, updateFormData } = useContact();
+
+  const handleChange = (e) => {
+    updateFormData(e.target.name, e.target.value);
+  };
 
   const [form] = Form.useForm();
 
@@ -35,9 +58,9 @@ export default function VCardContent() {
       children: (
         <div className="flex flex-col gap-10">
           <h4 className="bg-white text-xl p-3 rounded-xl">Color</h4>
-          <ColorPicker setColor={setSelectedColor} color={selectedColor} />
+          <ColorPicker color={selectedColor} setColor={setSelectedColor} />
           <h4 className="bg-white text-xl p-3 rounded-xl">Background</h4>
-          <ColorPicker setColor={setSelectedBGColor} color={selectedBGColor} />
+          <ColorPicker color={selectedBGColor} setColor={setSelectedBGColor} />
         </div>
       ),
     },
@@ -47,14 +70,11 @@ export default function VCardContent() {
       children: (
         <div className="flex flex-col gap-10">
           <h4 className="bg-white text-xl p-3 rounded-xl">Frame List</h4>
-          <FramePicker
-            selectedFrame={selectedFrame}
-            onFrameSelect={setSelectedFrame}
-          />
+          <FramePicker />
           <h4 className="bg-white text-xl p-3 rounded-xl">Frame Color</h4>
           <ColorPicker
-            setColor={setSelectedFrameColor}
             color={selectedFrameColor}
+            setColor={setSelectedFrameColor}
           />
         </div>
       ),
@@ -62,17 +82,12 @@ export default function VCardContent() {
     {
       key: "3",
       label: "Shape",
-      children: "Content of Tab Pane 3",
+      children: <ShapePicker />,
     },
     {
       key: "4",
       label: "Logo",
-      children: (
-        <LogoPicker
-          onSocialIconSelect={setSelectedSocialIcon}
-          selectedSocialIcon={selectedSocialIcon}
-        />
-      ),
+      children: <LogoPicker />,
     },
   ];
 
@@ -92,114 +107,168 @@ export default function VCardContent() {
             <h2>Enter your content</h2>
           </div>
           <div className="max-w-2xl mx-auto p-4">
-            <Form
-              form={form}
-              layout="vertical"
-              initialValues={{
-                firstname: "",
-                lastname: "",
-                mobile: "",
-                phone: "",
-                fax: "",
-                email: "",
-                company: "",
-                job: "",
-                street: "",
-                city: "",
-                state: "",
-                country: "",
-                website: "",
-              }}
-            >
-              {/* Name */}
-              <Form.Item label="Your name" className="mb-3">
-                <Row gutter={12}>
-                  <Col span={12}>
-                    <Form.Item name="firstname" noStyle>
-                      <Input placeholder="Firstname" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="lastname" noStyle>
-                      <Input placeholder="Lastname" />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form.Item>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Your name
+              </label>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="firstname"
+                  placeholder="Firstname"
+                  value={formData.firstname}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <input
+                  type="text"
+                  name="lastname"
+                  placeholder="Lastname"
+                  value={formData.lastname}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
 
-              {/* Contact */}
-              <Form.Item label="Contact" className="mb-3">
-                <Row gutter={[12, 12]}>
-                  <Col span={24}>
-                    <Form.Item name="mobile" noStyle>
-                      <Input placeholder="Mobile" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="phone" noStyle>
-                      <Input placeholder="Phone" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="fax" noStyle>
-                      <Input placeholder="Fax" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Form.Item name="email" noStyle>
-                      <Input placeholder="youremail@mail.com" />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form.Item>
+            {/* Contact */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Contact
+              </label>
+              <input
+                type="text"
+                name="mobile"
+                placeholder="Mobile"
+                value={formData.mobile}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <input
+                  type="text"
+                  name="phone"
+                  placeholder="Phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <input
+                  type="text"
+                  name="fax"
+                  placeholder="Fax"
+                  value={formData.fax}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <input
+                type="email"
+                name="email"
+                placeholder="youremail@mail.com"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
 
-              {/* Company */}
-              <Form.Item label="Company" className="mb-3">
-                <Row gutter={12}>
-                  <Col span={12}>
-                    <Form.Item name="company" noStyle>
-                      <Input placeholder="Company name" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="job" noStyle>
-                      <Input placeholder="Your job" />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form.Item>
+            {/* Company */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Company
+              </label>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="companyName"
+                  placeholder="Company name"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <input
+                  type="text"
+                  name="job"
+                  placeholder="Your job"
+                  value={formData.job}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
 
-              {/* Address */}
-              <Form.Item label="Address" className="mb-3">
-                <Row gutter={[12, 12]}>
-                  <Col span={12}>
-                    <Form.Item name="street" noStyle>
-                      <Input placeholder="Street" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="city" noStyle>
-                      <Input placeholder="City" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="state" noStyle>
-                      <Input placeholder="State" />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item name="country" noStyle>
-                      <Input placeholder="Country" />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form.Item>
+            {/* Address */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Address
+              </label>
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <input
+                  type="text"
+                  name="street"
+                  placeholder="Street"
+                  value={formData.street}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <input
+                  type="text"
+                  name="city"
+                  placeholder="City"
+                  value={formData.city}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="state"
+                  placeholder="State"
+                  value={formData.state}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <input
+                  type="text"
+                  name="country"
+                  placeholder="Country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
 
-              {/* Website */}
-              <Form.Item label="Website">
-                <Input placeholder="www.example.com" />
-              </Form.Item>
-            </Form>
+            {/* Website */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Website
+              </label>
+              <input
+                type="text"
+                name="website"
+                placeholder="www.example.com"
+                value={formData.website}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* LinkedIn */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                LinkedIn
+              </label>
+              <input
+                type="text"
+                name="linkedin"
+                placeholder="linkedin.com/in/username"
+                value={formData.linkedin}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
           </div>
           <div>
             <Tabs
@@ -212,6 +281,7 @@ export default function VCardContent() {
           </div>
         </Col>
         <Col span={8} style={{ padding: "10px" }}>
+          <ContactCard />
           <QRCodeView
             selectedFrame={selectedFrame}
             selectedBGColor={selectedBGColor}

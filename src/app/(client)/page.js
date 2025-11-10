@@ -18,7 +18,7 @@ export default function Home() {
 
   const onChange = (key) => {
     console.log(key);
-    setTabKey(key); // Changed to setTabKey
+    setTabKey(key);
     resetAll();
   };
 
@@ -66,7 +66,7 @@ export default function Home() {
         </div>
       ),
       key: "3",
-      children: <VCardContent key={tabKey} />,
+      children: <VCardContent key={tabKey} tabKey={tabKey} />,
     },
     {
       label: (

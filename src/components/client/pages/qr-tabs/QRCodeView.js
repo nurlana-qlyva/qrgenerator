@@ -52,7 +52,7 @@ const QRCodeView = ({ qrBase64 }) => {
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border border-blue-200">
+    <div className="max-w-sm mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
       {/* Header area */}
       <div className="bg-gray-50 px-8 py-12">
         {/* QR Code Container */}

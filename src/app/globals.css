@@ -38,3 +38,12 @@ body {
   background-color: #fff;
   border: 1px dashed #1D59F9;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

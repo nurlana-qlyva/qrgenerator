@@ -10,6 +10,7 @@ const ColorPicker = ({ setColor, color }) => {
   const [colorFormat, setColorFormat] = useState("HEX");
   const [isDragging, setIsDragging] = useState(false);
   const [isHueDragging, setIsHueDragging] = useState(false);
+  const [inputValue, setInputValue] = useState(color);
 
   const saturationRef = useRef(null);
   const hueRef = useRef(null);
@@ -18,7 +19,7 @@ const ColorPicker = ({ setColor, color }) => {
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
-      return; // ilk render'da setColor çalışmaz
+      return;
     }
     const newColorValue = getColorValue(
       colorFormat,
@@ -28,9 +29,14 @@ const ColorPicker = ({ setColor, color }) => {
       alpha
     );
     setColor(newColorValue);
+    setInputValue(newColorValue);
   }, [hue, saturation, lightness, alpha, colorFormat]);
 
-  // Kaydedilmiş renkler
+  // Sync inputValue when color prop changes externally
+  useEffect(() => {
+    setInputValue(color);
+  }, [color]);
+
   const [savedColors] = useState([
     "#FF4444",
     "#FF8800",
@@ -47,7 +53,6 @@ const ColorPicker = ({ setColor, color }) => {
     "#226688",
   ]);
 
-  // HSL to HEX dönüştürme
   const hslToHex = (h, s, l) => {
     l /= 100;
     const a = (s * Math.min(l, 1 - l)) / 100;
@@ -61,7 +66,6 @@ const ColorPicker = ({ setColor, color }) => {
     return `#${f(0)}${f(8)}${f(4)}`.toUpperCase();
   };
 
-  // HSL to RGB dönüştürme
   const hslToRgb = (h, s, l) => {
     l /= 100;
     const a = (s * Math.min(l, 1 - l)) / 100;
@@ -73,7 +77,6 @@ const ColorPicker = ({ setColor, color }) => {
     return [f(0), f(8), f(4)];
   };
 
-  // HSL to HSV dönüştürme
   const hslToHsv = (h, s, l) => {
     s /= 100;
     l /= 100;
@@ -82,7 +85,6 @@ const ColorPicker = ({ setColor, color }) => {
     return [Math.round(h), Math.round(sNew * 100), Math.round(v * 100)];
   };
 
-  // HEX to HSL dönüştürme
   const hexToHsl = (hex) => {
     const r = parseInt(hex.slice(1, 3), 16) / 255;
     const g = parseInt(hex.slice(3, 5), 16) / 255;
@@ -117,7 +119,6 @@ const ColorPicker = ({ setColor, color }) => {
     return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
   };
 
-  // RGB to HSL dönüştürme
   const rgbToHsl = (r, g, b) => {
     r /= 255;
     g /= 255;
@@ -149,7 +150,6 @@ const ColorPicker = ({ setColor, color }) => {
     return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
   };
 
-  // HSV to HSL dönüştürme
   const hsvToHsl = (h, s, v) => {
     s /= 100;
     v /= 100;
@@ -158,7 +158,6 @@ const ColorPicker = ({ setColor, color }) => {
     return [h, Math.round(sNew * 100), Math.round(l * 100)];
   };
 
-  // Seçilen formata göre renk değeri döndürme
   const getColorValue = (format, h, s, l, a) => {
     switch (format) {
       case "HEX":
@@ -183,7 +182,6 @@ const ColorPicker = ({ setColor, color }) => {
     }
   };
 
-  // Renk parsing fonksiyonları
   const parseColorValue = (value, format) => {
     try {
       switch (format) {
@@ -240,7 +238,6 @@ const ColorPicker = ({ setColor, color }) => {
     return null;
   };
 
-  // Saturation/Lightness picker için mouse olayları
   const handleSaturationMouseDown = (e) => {
     setIsDragging(true);
     updateSaturationFromMouse(e);
@@ -270,7 +267,6 @@ const ColorPicker = ({ setColor, color }) => {
     }
   };
 
-  // Hue slider için mouse olayları
   const handleHueMouseDown = (e) => {
     setIsHueDragging(true);
     updateHueFromMouse(e);
@@ -295,9 +291,9 @@ const ColorPicker = ({ setColor, color }) => {
     }
   };
 
-  // Renk input değişikliği
   const handleColorValueChange = (e) => {
     const value = e.target.value;
+    setInputValue(value);
 
     const parsedHsl = parseColorValue(value, colorFormat);
     if (parsedHsl) {
@@ -308,21 +304,18 @@ const ColorPicker = ({ setColor, color }) => {
     }
   };
 
-  // Format değişikliği
   const handleFormatChange = (e) => {
     setColorFormat(e.target.value);
   };
 
-  // Kaydedilmiş renk seçimi
   const selectSavedColor = (color) => {
     const [h, s, l] = hexToHsl(color);
     setHue(h);
     setSaturation(s);
     setLightness(l);
-    setAlpha(100); // Kaydedilmiş renkler tam opak
+    setAlpha(100);
   };
 
-  // Global mouse olayları
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isDragging) handleSaturationMouseMove(e);
@@ -348,7 +341,6 @@ const ColorPicker = ({ setColor, color }) => {
   return (
     <div className="bg-gray-50 p-6 rounded-2xl shadow-lg max-w-2xl mx-auto">
       <div className="flex gap-6">
-        {/* Sol taraf - Ana renk seçici alanı */}
         <div className="flex-shrink-0">
           <div
             ref={saturationRef}
@@ -359,7 +351,6 @@ const ColorPicker = ({ setColor, color }) => {
             }}
             onMouseDown={handleSaturationMouseDown}
           >
-            {/* Seçici nokta */}
             <div
               className="absolute w-4 h-4 border-2 border-white rounded-full shadow-lg pointer-events-none"
               style={{
@@ -373,9 +364,7 @@ const ColorPicker = ({ setColor, color }) => {
           </div>
         </div>
 
-        {/* Sağ taraf - Kontroller */}
         <div className="flex-1 flex flex-col">
-          {/* Hue slider */}
           <div className="mb-6">
             <div
               ref={hueRef}
@@ -386,7 +375,6 @@ const ColorPicker = ({ setColor, color }) => {
               }}
               onMouseDown={handleHueMouseDown}
             >
-              {/* Hue seçici */}
               <div
                 className="absolute w-6 h-6 bg-white border-2 border-gray-300 rounded-full shadow-lg pointer-events-none"
                 style={{
@@ -397,7 +385,6 @@ const ColorPicker = ({ setColor, color }) => {
               />
             </div>
 
-            {/* Alpha slider - RGBA ve HSLA formatları için */}
             {(colorFormat === "RGBA" || colorFormat === "HSLA") && (
               <div className="mt-4">
                 <label className="block text-xs text-gray-500 mb-2">
@@ -424,7 +411,6 @@ const ColorPicker = ({ setColor, color }) => {
             )}
           </div>
 
-          {/* Format selector ve renk input */}
           <div className="mb-6">
             <div className="flex items-center gap-2">
               <select
@@ -441,7 +427,7 @@ const ColorPicker = ({ setColor, color }) => {
               </select>
               <input
                 type="text"
-                value={color}
+                value={inputValue}
                 onChange={handleColorValueChange}
                 className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono"
                 placeholder={
@@ -453,7 +439,6 @@ const ColorPicker = ({ setColor, color }) => {
             </div>
           </div>
 
-          {/* Kaydedilmiş renkler */}
           <div className="flex-1">
             <h3 className="text-gray-600 text-sm font-medium mb-3">
               Saved Colors
