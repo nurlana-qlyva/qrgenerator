@@ -125,7 +125,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12">
+    <div className="min-h-screen flex items-center justify-center py-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 max-w-6xl w-full mx-6 lg:mx-12 gap-12 items-center">
         {/* Sol Taraf - Açıklama */}
         <div className="flex flex-col justify-center text-left space-y-6">
@@ -179,8 +179,8 @@ export default function RegisterPage() {
         {/* Sağ Taraf - Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-10 border border-gray-100">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Sign Up</h2>
-            <p className="text-gray-600">
+            <h2 className="text-[24px] font-bold text-gray-900 mb-2">Sign Up</h2>
+            <p className="text-gray-600 text-[13px]">
               Let's get you all set up so you can access your personal account
             </p>
           </div>
@@ -189,7 +189,7 @@ export default function RegisterPage() {
             {/* Ad & Soyad */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-[12px] font-medium text-gray-700 mb-1">
                   First Name
                 </label>
                 <input
@@ -198,7 +198,7 @@ export default function RegisterPage() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John"
-                  className={`border rounded-lg px-4 py-2.5 w-full text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`border rounded-[3px] p-[12px] w-full text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all h-[43px] ${
                     errors.name ? "border-red-500 bg-red-50" : "border-gray-300"
                   }`}
                 />
@@ -210,7 +210,7 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-[12px] font-medium text-gray-700 mb-1">
                   Last Name
                 </label>
                 <input
@@ -219,7 +219,7 @@ export default function RegisterPage() {
                   value={formData.surname}
                   onChange={handleChange}
                   placeholder="Doe"
-                  className={`border rounded-lg px-4 py-2.5 w-full text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`border rounded-[3px] p-[12px] w-full text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all h-[43px] ${
                     errors.surname
                       ? "border-red-500 bg-red-50"
                       : "border-gray-300"
@@ -235,7 +235,7 @@ export default function RegisterPage() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-[12px] font-medium text-gray-700 mb-1">
                 Email
               </label>
               <input
@@ -244,7 +244,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="john.doe@example.com"
-                className={`border rounded-lg px-4 py-2.5 w-full text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                className={`border rounded-[3px] p-[12px] w-full text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all h-[43px] ${
                   errors.email ? "border-red-500 bg-red-50" : "border-gray-300"
                 }`}
               />
@@ -257,7 +257,7 @@ export default function RegisterPage() {
 
             {/* Şifre */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-[12px] font-medium text-gray-700 mb-1">
                 Password
               </label>
               <div className="relative">
@@ -267,7 +267,7 @@ export default function RegisterPage() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="At least 8 characters"
-                  className={`border rounded-lg px-4 py-2.5 w-full pr-12 text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`border rounded-[3px] p-[12px] h-[43px] w-full pr-12 text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
                     errors.password
                       ? "border-red-500 bg-red-50"
                       : "border-gray-300"
@@ -290,7 +290,7 @@ export default function RegisterPage() {
 
             {/* Şartlar & Koşullar */}
             <div>
-              <label className="flex items-start gap-2 text-sm text-gray-600 cursor-pointer">
+              <label className="flex items-center gap-2 text-[12px] text-gray-600 cursor-pointer">
                 <input
                   type="checkbox"
                   name="agreeToTerms"
@@ -326,13 +326,13 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-all disabled:bg-blue-400 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-semibold py-[10px] rounded-[3px] transition-all disabled:bg-blue-400 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
             >
               {isSubmitting ? "Creating account..." : "Create account"}
             </button>
 
             {/* Giriş Yap Linki */}
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-[12px] text-gray-600">
               Already have an account?{" "}
               <a
                 href="/login"
@@ -347,7 +347,7 @@ export default function RegisterPage() {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
+              <div className="relative flex justify-center text-[12px">
                 <span className="px-2 bg-white text-gray-500">
                   Or sign up with
                 </span>
