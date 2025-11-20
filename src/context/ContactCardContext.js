@@ -16,12 +16,10 @@ export function ContactProvider({ children }) {
     email: "",
     companyName: "",
     job: "",
-    street: "",
-    city: "",
-    state: "",
-    country: "",
+    address: "",
     website: "",
     linkedin: "",
+    socialLinks: [{ id: Date.now(), platform: "linkedin", url: "" }],
   });
 
   const updateFormData = (name, value) => {
@@ -31,8 +29,42 @@ export function ContactProvider({ children }) {
     }));
   };
 
+  const addSocialLink = () => {
+    setFormData((prev) => ({
+      ...prev,
+      socialLinks: [
+        ...prev.socialLinks,
+        { id: Date.now(), platform: "linkedin", url: "" },
+      ],
+    }));
+  };
+
+  const removeSocialLink = (id) => {
+    setFormData((prev) => ({
+      ...prev,
+      socialLinks: prev.socialLinks.filter((link) => link.id !== id),
+    }));
+  };
+
+  const updateSocialLink = (id, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      socialLinks: prev.socialLinks.map((link) =>
+        link.id === id ? { ...link, [field]: value } : link
+      ),
+    }));
+  };
+
   return (
-    <ContactContext.Provider value={{ formData, updateFormData }}>
+    <ContactContext.Provider
+      value={{
+        formData,
+        updateFormData,
+        addSocialLink,
+        removeSocialLink,
+        updateSocialLink,
+      }}
+    >
       {children}
     </ContactContext.Provider>
   );

@@ -11,6 +11,14 @@ export async function signIn(data) {
   return res.data;
 }
 
+export async function signUp(data) {
+  const res = await axios.post(`${API_BASE}/Account/signup`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return res.data;
+}
 
 export const refreshAccessToken = async (refreshToken) => {
   try {

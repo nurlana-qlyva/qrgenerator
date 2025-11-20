@@ -19,11 +19,11 @@ export default function RootLayout({ children }) {
         <meta name="google-signin-client_id" content="" />
         <meta name="google-signin-scope" content="" />
       </head>
-      <body>
+      <body style={{ background: "#F5F5FF" }} className="flex justify-center">
         <AuthProvider>
           <QRDesignProvider>
             <ContactProvider>
-              <Layout style={{ minHeight: "100vh" }}>
+              <Layout style={{ minHeight: "100vh", maxWidth: "1140px" }}>
                 <HeaderWrapper />
                 {children}
                 <FooterWrapper />

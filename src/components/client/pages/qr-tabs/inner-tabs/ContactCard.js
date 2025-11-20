@@ -9,6 +9,7 @@ import {
   Upload,
   ChevronDown,
 } from "lucide-react";
+import { Image } from "antd";
 import { useContact } from "@/context/ContactCardContext";
 
 export default function ContactCard() {
@@ -32,6 +33,15 @@ export default function ContactCard() {
     "#6B7280",
     "#14B8A6",
   ];
+
+  const socialPlatforms = {
+    linkedin: { name: "LinkedIn", color: "#0077b5" },
+    tiktok: { name: "TikTok", color: "#000000" },
+    facebook: { name: "Facebook", color: "#3b5998" },
+    youtube: { name: "YouTube", color: "#ff0000" },
+    twitter: { name: "Twitter", color: "#0ea5e9" },
+    instagram: { name: "Instagram", color: "#e1306c" },
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -86,8 +96,7 @@ TEL;TYPE=CELL:${formData.mobile}
 TEL;TYPE=WORK:${formData.phone}
 TEL;TYPE=FAX:${formData.fax}
 EMAIL:${formData.email}
-ADR:;;${formData.street};${formData.city};${formData.state};${formData.country}
-URL:${formData.website}
+ADR:;;${formData.address}
 URL:${formData.linkedin}
 END:VCARD`;
 
@@ -101,8 +110,11 @@ END:VCARD`;
   };
 
   const fullName = `${formData.firstname} ${formData.lastname}`.trim();
-  const fullAddress =
-    `${formData.street} ${formData.city} ${formData.state} ${formData.country}`.trim();
+  const fullAddress = `${formData.address}`.trim();
+
+  // Filter social links that have URLs
+  const activeSocialLinks =
+    formData.socialLinks?.filter((link) => link.url) || [];
 
   return (
     <div
@@ -316,38 +328,52 @@ END:VCARD`;
             </div>
           )}
 
-          {formData.website && (
-            <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition cursor-pointer">
-              <div className="bg-purple-500 rounded-xl p-2.5">
-                <Globe size={20} className="text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="text-xs text-gray-500">Website</p>
-                <p className="text-sm font-medium text-gray-900">
-                  {formData.website}
-                </p>
+          {/* Social Networks */}
+          {activeSocialLinks.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                Social Networks
+              </h3>
+              <div className="space-y-3">
+                {activeSocialLinks.map((link) => {
+                  const platform = socialPlatforms[link.platform];
+                  return (
+                    <a
+                      key={link.id}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition cursor-pointer"
+                    >
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: platform?.color }}
+                      >
+                        <Image
+                          src={`/socials/${link.platform}.png`}
+                          alt={platform?.name}
+                          width={44}
+                          height={44}
+                          preview={false}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900">
+                          {platform?.name}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate">
+                          {link.url
+                            .replace(/^https?:\/\//, "")
+                            .replace(/^www\./, "")}
+                        </p>
+                      </div>
+                    </a>
+                  );
+                })}
               </div>
             </div>
           )}
         </div>
-
-        {/* Social Networks */}
-        {formData.linkedin && (
-          <div className="mt-6">
-            <p className="text-xs text-gray-500 mb-3">Social Networks</p>
-            <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition cursor-pointer">
-              <div className="bg-blue-600 rounded-xl p-2.5">
-                <Linkedin size={20} className="text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="text-xs text-gray-500">LinkedIn</p>
-                <p className="text-sm font-medium text-gray-900">
-                  {formData.linkedin}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { continueWithGoogle } from "@/api/auth/api";
 import { useEffect, useRef } from "react";
 
-export default function GoogleLogin({ onLoginSuccess, onClose }) {
+export default function GoogleLogin({ onLoginSuccess, onClose, setIsLogin, isLogin }) {
   const googleButtonRef = useRef(null);
 
   useEffect(() => {
@@ -49,6 +49,10 @@ export default function GoogleLogin({ onLoginSuccess, onClose }) {
               if (onLoginSuccess) {
                 onLoginSuccess(decoded);
               }
+
+              if (!isLogin) {
+                setIsLogin(true)
+              }
             }
           } catch (err) {
             console.error("Backend error:", err);
@@ -56,16 +60,19 @@ export default function GoogleLogin({ onLoginSuccess, onClose }) {
         },
         auto_select: false,
         cancel_on_tap_outside: true,
+        itp_support: false,
+        use_fedcm_for_prompt: false,
       });
 
       // Buton render
       window.google.accounts.id.renderButton(googleButtonRef.current, {
-        type: "standard",
+        type: "icon",
         size: "large",
         theme: "outline",
         shape: "rectangular",
-        text: "continue_with",
+        text: "signup",
         logo_alignment: "center",
+        personalization: "none",
       });
     };
 

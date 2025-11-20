@@ -6,7 +6,7 @@ import ColorPicker from "./inner-tabs/ColorPicker";
 import FramePicker from "./inner-tabs/FramePicker";
 import QRCodeView from "./QRCodeView";
 import LogoPicker from "./inner-tabs/LogoPicker";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import ContactCard from "./inner-tabs/ContactCard";
 import { useContact } from "@/context/ContactCardContext";
 import { useQRDesign } from "@/context/QRDesignContext";
@@ -14,6 +14,8 @@ import ShapePicker from "./inner-tabs/ShapePicker";
 
 export default function VCardContent() {
   const [qrBase64, setQrBase64] = useState(null);
+  const [openDropdownId, setOpenDropdownId] = useState(null);
+
   const {
     // State values
     showLoginAlert,
@@ -33,13 +35,33 @@ export default function VCardContent() {
     setShowLoginAlert,
   } = useQRDesign();
 
-  const { formData, updateFormData } = useContact();
+  const {
+    formData,
+    updateFormData,
+    addSocialLink,
+    removeSocialLink,
+    updateSocialLink,
+  } = useContact();
 
   const handleChange = (e) => {
     updateFormData(e.target.name, e.target.value);
   };
 
   const [form] = Form.useForm();
+
+  const socialPlatforms = [
+    { id: "linkedin", name: "LinkedIn", color: "#0077b5" },
+    { id: "tiktok", name: "TikTok", color: "#000000" },
+    { id: "facebook", name: "Facebook", color: "#3b5998" },
+    { id: "youtube", name: "YouTube", color: "#ff0000" },
+    { id: "twitter", name: "Twitter", color: "#0ea5e9" },
+    { id: "instagram", name: "Instagram", color: "#e1306c" },
+  ];
+
+  const getPlatformColor = (platform) => {
+    const found = socialPlatforms.find((p) => p.id === platform);
+    return found ? found.color : "#0077b5";
+  };
 
   const title = (
     <div
@@ -202,72 +224,147 @@ export default function VCardContent() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Address
               </label>
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                <input
-                  type="text"
-                  name="street"
-                  placeholder="Street"
-                  value={formData.street}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <input
-                  type="text"
-                  name="city"
-                  placeholder="City"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  name="state"
-                  placeholder="State"
-                  value={formData.state}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <input
-                  type="text"
-                  name="country"
-                  placeholder="Country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            {/* Website */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Website
-              </label>
               <input
                 type="text"
-                name="website"
-                placeholder="www.example.com"
-                value={formData.website}
+                name="address"
+                placeholder="address"
+                value={formData.address}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
-            {/* LinkedIn */}
+            {/* Social Networks */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                LinkedIn
+                Social Networks
               </label>
-              <input
-                type="text"
-                name="linkedin"
-                placeholder="linkedin.com/in/username"
-                value={formData.linkedin}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+              <div className="space-y-3">
+                {formData.socialLinks?.map((link) => {
+                  const isOpen = openDropdownId === link.id;
+
+                  return (
+                    <div key={link.id} className="flex items-center gap-2">
+                      {/* Drag Handle */}
+                      <button className="text-gray-400 hover:text-gray-600 cursor-move p-1">
+                        <span className="text-xl">⋮⋮</span>
+                      </button>
+
+                      {/* Custom Platform Selector */}
+                      <div className="relative">
+                        <button
+                          onClick={() =>
+                            setOpenDropdownId(isOpen ? null : link.id)
+                          }
+                          className="flex items-center justify-center rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                          style={{
+                            backgroundColor: getPlatformColor(link.platform),
+                          }}
+                        >
+                          <Image
+                            src={`/socials/${link.platform}.png`}
+                            alt={link.platform}
+                            width={48}
+                            height={48}
+                            preview={false}
+                          />
+                        </button>
+
+                        {/* Dropdown Arrow */}
+                        <div className="absolute -right-1 -top-1 pointer-events-none text-white text-xs bg-gray-800 rounded-full w-4 h-4 flex items-center justify-center">
+                          ▼
+                        </div>
+
+                        {/* Custom Dropdown Menu */}
+                        {isOpen && (
+                          <>
+                            {/* Backdrop */}
+                            <div
+                              className="fixed inset-0 z-10"
+                              onClick={() => setOpenDropdownId(null)}
+                            />
+
+                            {/* Dropdown */}
+                            <div className="absolute top-full mt-2 left-0 z-20 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden min-w-[100px]">
+                              {socialPlatforms.map((platform) => (
+                                <button
+                                  key={platform.id}
+                                  onClick={() => {
+                                    updateSocialLink(
+                                      link.id,
+                                      "platform",
+                                      platform.id
+                                    );
+                                    setOpenDropdownId(null);
+                                  }}
+                                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors ${
+                                    link.platform === platform.id
+                                      ? "bg-blue-50"
+                                      : ""
+                                  }`}
+                                >
+                                  <div
+                                    className="flex items-center justify-center rounded-lg"
+                                    style={{ backgroundColor: platform.color }}
+                                  >
+                                    <Image
+                                      src={`/socials/${platform.id}.png`}
+                                      alt={platform.name}
+                                      width={48}
+                                      height={48}
+                                      preview={false}
+                                    />
+                                  </div>
+                                  <span className="font-medium text-gray-700">
+                                    {platform.name}
+                                  </span>
+                                </button>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      {/* URL Input */}
+                      <input
+                        type="url"
+                        placeholder="Enter your URL"
+                        value={link.url}
+                        onChange={(e) =>
+                          updateSocialLink(link.id, "url", e.target.value)
+                        }
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+
+                      {/* Delete Button */}
+                      <button
+                        onClick={() => removeSocialLink(link.id)}
+                        className="text-blue-500 hover:text-blue-600 p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
+                        </svg>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Add More Button */}
+              <button
+                onClick={addSocialLink}
+                className="mt-4 flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+              >
+                <span className="text-xl">+</span>
+                Add more
+              </button>
             </div>
           </div>
           <div>
@@ -282,14 +379,7 @@ export default function VCardContent() {
         </Col>
         <Col span={8} style={{ padding: "10px" }}>
           <ContactCard />
-          <QRCodeView
-            selectedFrame={selectedFrame}
-            selectedBGColor={selectedBGColor}
-            selectedColor={selectedColor}
-            selectedSocialIcon={selectedSocialIcon}
-            qrContent={qrContent}
-            selectedFrameColor={selectedFrameColor}
-          />
+          <QRCodeView qrBase64={qrBase64} />
         </Col>
       </Row>
     </div>
