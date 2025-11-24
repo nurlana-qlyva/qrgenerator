@@ -11,6 +11,7 @@ import ContactCard from "./inner-tabs/ContactCard";
 import { useContact } from "@/context/ContactCardContext";
 import { useQRDesign } from "@/context/QRDesignContext";
 import ShapePicker from "./inner-tabs/ShapePicker";
+import { getQRCodeService } from "@/api/tabs/api";
 
 export default function VCardContent() {
   const [qrBase64, setQrBase64] = useState(null);
@@ -46,6 +47,72 @@ export default function VCardContent() {
   const handleChange = (e) => {
     updateFormData(e.target.name, e.target.value);
   };
+
+  const handleGenerate = async () => {
+    const body = {
+      type: 4,
+      payload: {
+        firstName: formData.firstname,
+        lastName: formData.lastname,
+        mobile1: formData.mobile,
+        // Mobile2: formData.firstname,
+        phone: formData.phone,
+        fax: formData.fax,
+        email: formData.email,
+        companyName: formData.companyName,
+        yourJob: formData.job,
+        address: formData.address,
+        website: formData.website,
+      },
+      designOptions: {
+        foregroundColor: selectedColor,
+        backgroundColor: selectedBGColor,
+        shape: selectedShape,
+        logoId: selectedSocialIcon,
+        finderStyle: selectedFinder,
+        frameForegroundColor: selectedFrameColor,
+        frameStyle: selectedFrame?.id || 0,
+      },
+    };
+
+    try {
+      const res = await getQRCodeService(body);
+
+      if (res?.qrCodeBase64) {
+        setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
+      } else {
+        throw new Error("Invalid response format");
+      }
+
+      return res;
+    } catch (error) {
+      if (
+        error.message.includes("authentication") ||
+        error.message.includes("token")
+      ) {
+        alert("Please login again to continue.");
+      } else {
+        alert(`Error: ${error.message}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!qrContent || !selectedBGColor || !selectedColor) {
+      return;
+    }
+
+  }, [
+    selectedFrame,
+    selectedFrameColor,
+    selectedBGColor,
+    selectedColor,
+    selectedSocialIcon,
+    qrContent,
+    selectedShape,
+    selectedFinder,
+    formData
+  ]);
 
   const [form] = Form.useForm();
 
@@ -378,7 +445,7 @@ export default function VCardContent() {
           </div>
         </Col>
         <Col span={8} style={{ padding: "10px" }}>
-          <ContactCard />
+          <ContactCard handleGenerate={handleGenerate} />
           <QRCodeView qrBase64={qrBase64} />
         </Col>
       </Row>

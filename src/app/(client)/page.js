@@ -166,7 +166,7 @@ export default function Home() {
       <div className={styles.tab}>
         <Tabs
           activeKey={tabKey}
-          destroyInactiveTabPane={true}
+          destroyOnHidden={true}
           onChange={onChange}
           items={items}
           tabBarGutter={4}

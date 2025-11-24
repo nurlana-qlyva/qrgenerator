@@ -12,7 +12,7 @@ import {
 import { Image } from "antd";
 import { useContact } from "@/context/ContactCardContext";
 
-export default function ContactCard() {
+export default function ContactCard({ handleGenerate }) {
   const { formData } = useContact();
   const [coverImage, setCoverImage] = useState(null);
   const [coverColor, setCoverColor] = useState("#E5E7EB");
@@ -107,6 +107,7 @@ END:VCARD`;
     link.download = `${formData.firstname}-${formData.lastname}.vcf`;
     link.click();
     window.URL.revokeObjectURL(url);
+    handleGenerate()
   };
 
   const fullName = `${formData.firstname} ${formData.lastname}`.trim();

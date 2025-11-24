@@ -18,7 +18,6 @@ export function ContactProvider({ children }) {
     job: "",
     address: "",
     website: "",
-    linkedin: "",
     socialLinks: [{ id: Date.now(), platform: "linkedin", url: "" }],
   });
 

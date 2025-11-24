@@ -12,6 +12,7 @@ export async function signIn(data) {
 }
 
 export async function signUp(data) {
+  console.log("data " + data)
   const res = await axios.post(`${API_BASE}/Account/signup`, data, {
     headers: {
       "Content-Type": "application/json",
