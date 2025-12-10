@@ -4,13 +4,11 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: #f5f5f5;
   gap: 20px;
-  padding: 20px;
+  border-radius: 11px;
 }
 
 .hero {
-  /* Background image ile white overlay */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -25,11 +23,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   position: relative;
 }
 
-/* Alternatif olarak ::before pseudo-element ile overlay */
 .hero::before {
   content: "";
   position: absolute;
@@ -42,7 +38,6 @@
   z-index: 1;
 }
 
-/* İçeriğin overlay'in üstünde görünmesi için */
 .hero > * {
   position: relative;
   z-index: 2;
@@ -86,10 +81,19 @@
   box-shadow: 0 6px 20px rgba(29, 89, 249, 0.3);
 }
 
+.customTabs :global(.ant-tabs-nav-list) {
+  gap: 6px !important;
+}
+
 .customTabs :global(.ant-tabs-nav) {
   background: #fff !important;
-  padding: 0 10px !important;
-  border-radius: 10px !important;
+  padding: 10px !important;
+  border-radius: 11px !important;
+  margin-bottom: 10px !important;
+}
+
+.customTabs :global(.ant-tabs-tab) {
+  padding: 0 !important;
 }
 
 .customTabs :global(.ant-tabs-content-holder) {
@@ -105,30 +109,37 @@
 }
 
 .customTabs :global(.ant-tabs-tab-btn) {
-  min-width: 52px !important;
+  min-width: 140px !important;
   background: #fff !important;
   color: #000 !important;
-  border-radius: 10px !important;
+  border-radius: 11px !important;
   border: 1px solid #e5e5e5 !important;
-  padding: 6px 16px !important;
+  padding: 12px 16px !important;
 }
 
 .customTabs :global(.ant-tabs-ink-bar) {
   display: none !important;
 }
 
+.designTabs :global(.ant-tabs-nav-list) {
+  gap: 0 !important;
+  padding: 6px !important;
+}
+
 .designTabs :global(.ant-tabs-nav) {
   background: #f5f5f5 !important;
-  border-radius: 10px !important;
+  border-radius: 11px !important;
   justify-content: space-between !important;
   padding: 10px !important;
   gap: 10px !important;
 }
 
 .designTabs :global(.ant-tabs-nav-wrap) {
-  background: #fff !important;
   border-radius: 10px !important;
-  padding: 0 10px !important;
+  margin-left: 36px !important;
+  background: transparent !important;
+  justify-content: space-between !important;
+  width: 100% !important;
 }
 
 .designTabs :global(.ant-tabs-content-holder) {
@@ -138,18 +149,19 @@
 }
 
 .designTabs :global(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
-  color: #1d59f9 !important;
-  background: #dde2fa !important;
+  color: #000 !important;
+  background: #fff !important;
   border: 1px solid transparent !important;
 }
 
 .designTabs :global(.ant-tabs-tab-btn) {
-  min-width: 52px !important;
-  background: #fff !important;
+  min-width: 80px !important;
+  background: transparent !important;
   color: #000 !important;
-  border-radius: 10px !important;
+  border-radius: 4px !important;
   border: 1px solid transparent !important;
   padding: 6px 16px !important;
+  text-align: center ;
 }
 
 .designTabs :global(.ant-tabs-ink-bar) {
@@ -195,7 +207,6 @@
 .tab {
   background: #e7e7ea;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 11px;
   width: 100%;
-  max-width: 1200px;
 }

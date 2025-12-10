@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <QRDesignProvider>
             <ContactProvider>
-              <Layout style={{ minHeight: "100vh", maxWidth: "1140px" }}>
+              <Layout style={{ minHeight: "100vh", maxWidth: "1140px", gap: "15px" }}>
                 <HeaderWrapper />
                 {children}
                 <FooterWrapper />

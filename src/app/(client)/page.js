@@ -151,16 +151,6 @@ export default function Home() {
           </span>
           track your QR codes
         </p>
-        <Link href="/">
-          <Button type="primary" className={styles.heroButton}>
-            <Image
-              src="./icons/qr.svg"
-              alt="qr code generator"
-              preview={false}
-            />{" "}
-            Create QR Code
-          </Button>
-        </Link>
       </div>
 
       <div className={styles.tab}>

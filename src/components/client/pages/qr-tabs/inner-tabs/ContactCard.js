@@ -119,8 +119,8 @@ END:VCARD`;
 
   return (
     <div
-      className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-y-scroll mb-4 scrollbar-hide"
-      style={{ height: "884px" }}
+      className="w-full max-w-sm bg-white rounded-[12px] overflow-y-scroll mb-4 scrollbar-hide border-[#f5f5f5]"
+      style={{ height: "700px", border: "4px solid #f5f5f5" }}
     >
       {/* Cover Image */}
       <div

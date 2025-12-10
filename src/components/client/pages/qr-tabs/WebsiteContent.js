@@ -105,10 +105,10 @@ const WebsiteContent = ({ tabKey }) => {
       key: "1",
       label: "Color",
       children: (
-        <div className="flex flex-col gap-10">
-          <h4 className="bg-white text-xl p-3 rounded-xl">Color</h4>
+        <div className="flex flex-col gap-2">
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Color</h4>
           <ColorPicker color={selectedColor} setColor={setSelectedColor} />
-          <h4 className="bg-white text-xl p-3 rounded-xl">Background</h4>
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Background</h4>
           <ColorPicker color={selectedBGColor} setColor={setSelectedBGColor} />
         </div>
       ),
@@ -117,10 +117,10 @@ const WebsiteContent = ({ tabKey }) => {
       key: "2",
       label: "Frame",
       children: (
-        <div className="flex flex-col gap-10">
-          <h4 className="bg-white text-xl p-3 rounded-xl">Frame List</h4>
+        <div className="flex flex-col gap-2">
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Frame List</h4>
           <FramePicker />
-          <h4 className="bg-white text-xl p-3 rounded-xl">Frame Color</h4>
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Frame Color</h4>
           <ColorPicker
             color={selectedFrameColor}
             setColor={setSelectedFrameColor}
@@ -189,7 +189,7 @@ const WebsiteContent = ({ tabKey }) => {
           </div>
         </Col>
 
-        <Col span={8} style={{ padding: "10px" }}>
+        <Col span={8} className="px-[50px]">
           <QRCodeView qrBase64={qrBase64} />
         </Col>
       </Row>

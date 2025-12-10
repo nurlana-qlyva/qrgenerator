@@ -29,7 +29,7 @@ export default function ShapePicker() {
   } = useQRDesign();
 
   return (
-    <div className="w-full max-w-xl mx-auto p-6 bg-white rounded-xl shadow">
+    <div className="w-full p-6 bg-white rounded-[11px]">
       {/* Body shape */}
       <div className="mb-6">
         <h3 className="text-sm font-medium text-gray-700 mb-2">Body shape</h3>

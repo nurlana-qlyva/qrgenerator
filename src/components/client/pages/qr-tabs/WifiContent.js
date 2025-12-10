@@ -1,12 +1,161 @@
 "use client";
 
-import { Form, Input, Row, Col, Select, Switch, Image } from "antd";
-import { useState } from "react";
+import {
+  Form,
+  Input,
+  Row,
+  Col,
+  Select,
+  Switch,
+  Image,
+  Tabs,
+  Button,
+} from "antd";
+import { useEffect, useState } from "react";
+import styles from "../../../../styles/HomePage.module.css";
 import QRCodeView from "./QRCodeView";
+import { useQRDesign } from "@/context/QRDesignContext";
+import LogoPicker from "./inner-tabs/LogoPicker";
+import ShapePicker from "./inner-tabs/ShapePicker";
+import FramePicker from "./inner-tabs/FramePicker";
+import ColorPicker from "./inner-tabs/ColorPicker";
+import { getQRCodeService } from "@/api/tabs/api";
 
 export default function WifiContent() {
   const [form] = Form.useForm();
   const [hiddenNetwork, setHiddenNetwork] = useState(false);
+
+  const [qrBase64, setQrBase64] = useState(null);
+  const {
+    // State values
+    showLoginAlert,
+    selectedColor,
+    setSelectedColor,
+    selectedFrameColor,
+    setSelectedFrameColor,
+    selectedBGColor,
+    setSelectedBGColor,
+    qrContent,
+    selectedFrame,
+    selectedSocialIcon,
+    selectedShape,
+    selectedFinder,
+
+    // State setters
+    setShowLoginAlert,
+  } = useQRDesign();
+
+  const handleGenerate = async () => {
+    const values = form.getFieldsValue();
+    const body = {
+      type: 3,
+      payload: {
+        ssid: values.ssid,
+        password : values.password,
+        security : values.encryption,
+        hidden : hiddenNetwork
+      },
+      designOptions: {
+        foregroundColor: selectedColor,
+        backgroundColor: selectedBGColor,
+        shape: selectedShape,
+        logoId: selectedSocialIcon,
+        finderStyle: selectedFinder,
+        frameForegroundColor: selectedFrameColor,
+        frameStyle: selectedFrame?.id || 0,
+      },
+    };
+
+    try {
+      const res = await getQRCodeService(body);
+      console.log("QR Code Response:", res);
+
+      if (res?.qrCodeBase64) {
+        setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
+        console.log("QR Code generated successfully!");
+      } else {
+        throw new Error("Invalid response format");
+      }
+
+      return res;
+    } catch (error) {
+      console.error("Generate QR Error:", error);
+
+      if (
+        error.message.includes("authentication") ||
+        error.message.includes("token")
+      ) {
+        alert("Please login again to continue.");
+      } else {
+        alert(`Error: ${error.message}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!selectedBGColor || !selectedColor) {
+      return;
+    }
+    handleGenerate();
+  }, [
+    selectedFrame,
+    selectedFrameColor,
+    selectedBGColor,
+    selectedColor,
+    selectedSocialIcon,
+    selectedFinder,
+    selectedShape
+  ]);
+
+  const items = [
+    {
+      key: "1",
+      label: "Color",
+      children: (
+        <div className="flex flex-col gap-2">
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Color</h4>
+          <ColorPicker color={selectedColor} setColor={setSelectedColor} />
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Background</h4>
+          <ColorPicker color={selectedBGColor} setColor={setSelectedBGColor} />
+        </div>
+      ),
+    },
+    {
+      key: "2",
+      label: "Frame",
+      children: (
+        <div className="flex flex-col gap-2">
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Frame List</h4>
+          <FramePicker />
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Frame Color</h4>
+          <ColorPicker
+            color={selectedFrameColor}
+            setColor={setSelectedFrameColor}
+          />
+        </div>
+      ),
+    },
+    {
+      key: "3",
+      label: "Shape",
+      children: <ShapePicker />,
+    },
+    {
+      key: "4",
+      label: "Logo",
+      children: <LogoPicker />,
+    },
+  ];
+
+  const title = (
+    <div
+      className="flex items-center gap-3"
+      style={{ flex: 1, textAlign: "center" }}
+    >
+      <Image src="./icons/design.svg" alt="qr code content" width={30} />
+      <h3 style={{ margin: "0" }}>Design your Qr</h3>
+    </div>
+  );
 
   return (
     <div style={{ background: "#fff" }}>
@@ -66,9 +215,9 @@ export default function WifiContent() {
                   >
                     <Select
                       options={[
-                        { value: "none", label: "No encryption" },
-                        { value: "wpa", label: "WPA" },
-                        { value: "wep", label: "WEP" },
+                        { value: "NOPASS", label: "No encryption" },
+                        { value: "WPA", label: "WPA" },
+                        { value: "WEB", label: "WEP" },
                       ]}
                       placeholder="Select encryption"
                     />
@@ -83,12 +232,24 @@ export default function WifiContent() {
                     <span className="text-gray-700">Hidden network</span>
                   </div>
                 </Col>
+                <Col span={12}>
+                <Button onClick={handleGenerate}>Create</Button>
+                </Col>
               </Row>
             </Form>
+            <div>
+              <Tabs
+                className={styles.designTabs}
+                tabBarExtraContent={{
+                  left: title,
+                }}
+                items={items}
+              />
+            </div>
           </div>
         </Col>
-        <Col span={8} style={{ padding: "10px" }}>
-          <QRCodeView />
+        <Col span={8} className="px-[50px]">
+          <QRCodeView qrBase64={qrBase64} />
         </Col>
       </Row>
     </div>

@@ -339,7 +339,7 @@ const ColorPicker = ({ setColor, color }) => {
   }, [isDragging, isHueDragging]);
 
   return (
-    <div className="bg-gray-50 p-6 rounded-2xl shadow-lg max-w-2xl mx-auto">
+    <div className="bg-[#f5f5f5] p-6 rounded-[11px]">
       <div className="flex gap-6">
         <div className="flex-shrink-0">
           <div

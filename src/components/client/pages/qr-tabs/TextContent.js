@@ -10,7 +10,7 @@ import { useQRDesign } from "@/context/QRDesignContext";
 import ShapePicker from "./inner-tabs/ShapePicker";
 import { getQRCodeService } from "@/api/tabs/api";
 
-const TextContent = ({ tabKey }) => {
+const TextContent = () => {
   const [qrBase64, setQrBase64] = useState(null);
   const {
     // State values
@@ -89,7 +89,7 @@ const TextContent = ({ tabKey }) => {
     selectedFrame,
     selectedFrameColor,
     selectedBGColor,
-    selectedColor,
+    selectedColor, 
     selectedSocialIcon,
     qrContent,
   ]);
@@ -109,10 +109,10 @@ const TextContent = ({ tabKey }) => {
       key: "1",
       label: "Color",
       children: (
-        <div className="flex flex-col gap-10">
-          <h4 className="bg-white text-xl p-3 rounded-xl">Color</h4>
+        <div className="flex flex-col gap-2">
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Color</h4>
           <ColorPicker color={selectedColor} setColor={setSelectedColor} />
-          <h4 className="bg-white text-xl p-3 rounded-xl">Background</h4>
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Background</h4>
           <ColorPicker color={selectedBGColor} setColor={setSelectedBGColor} />
         </div>
       ),
@@ -121,10 +121,10 @@ const TextContent = ({ tabKey }) => {
       key: "2",
       label: "Frame",
       children: (
-        <div className="flex flex-col gap-10">
-          <h4 className="bg-white text-xl p-3 rounded-xl">Frame List</h4>
+        <div className="flex flex-col gap-2">
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Frame List</h4>
           <FramePicker />
-          <h4 className="bg-white text-xl p-3 rounded-xl">Frame Color</h4>
+          <h4 className="bg-white text-[14px] p-3 rounded-xl">Frame Color</h4>
           <ColorPicker
             color={selectedFrameColor}
             setColor={setSelectedFrameColor}
@@ -187,7 +187,7 @@ const TextContent = ({ tabKey }) => {
             />
           </div>
         </Col>
-        <Col span={8} style={{ padding: "10px" }}>
+        <Col span={8} className="px-[50px]">
           <QRCodeView qrBase64={qrBase64} />
         </Col>
       </Row>

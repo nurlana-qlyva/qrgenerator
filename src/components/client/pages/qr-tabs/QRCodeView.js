@@ -52,46 +52,44 @@ const QRCodeView = ({ qrBase64 }) => {
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <div className="max-w-sm mx-auto bg-[#F5F5F5] rounded-[11px] overflow-hidden p-[34px]">
       {/* Header area */}
-      <div className="bg-gray-50 px-8 py-12">
-        {/* QR Code Container */}
-        <div className="relative">
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <div className="w-48 h-48 mx-auto relative flex items-center justify-center">
-              {/* QR Code - Dinamik pozisyonlama */}
-              {qrBase64 ? (
-                <div>
-                  <Image
-                    src={qrBase64}
-                    alt="Generated QR"
-                    preview={false}
-                    style={{
-                      objectFit: "contain",
-                    }}
-                    className="rounded-lg"
-                  />
-                </div>
-              ) : (
-                <div></div>
-              )}
-            </div>
+      {/* QR Code Container */}
+      <div className="relative">
+        <div className="bg-white">
+          <div className="w-48 h-48 mx-auto relative flex items-center justify-center">
+            {/* QR Code - Dinamik pozisyonlama */}
+            {qrBase64 ? (
+              <div>
+                <Image
+                  src={qrBase64}
+                  alt="Generated QR"
+                  preview={false}
+                  style={{
+                    objectFit: "contain",
+                  }}
+                  className="rounded-lg"
+                />
+              </div>
+            ) : (
+              <div></div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Controls */}
-      <div className="px-6 py-6 space-y-4">
+      <div className="mt-[30px]">
         {/* Format Selection */}
-        <div className="flex gap-3">
+        <div className="flex mb-[18px]">
           {["PNG", "SVG"].map((format) => (
             <button
               key={format}
               onClick={() => setSelectedFormat(format)}
-              className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 py-3 px-4 rounded-[6px] text-sm font-medium transition-all duration-200 ${
                 selectedFormat === format
-                  ? "bg-gray-800 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-white"
+                  : "bg-none"
               }`}
             >
               {format}
@@ -100,15 +98,15 @@ const QRCodeView = ({ qrBase64 }) => {
         </div>
 
         {/* Size Selection */}
-        <div className="flex gap-2">
+        <div className="flex mb-[18px]">
           {["200px", "1000px", "2000px"].map((size) => (
             <button
               key={size}
               onClick={() => setSelectedSize(size)}
               className={`flex-1 py-3 px-3 rounded-xl text-xs font-medium transition-all duration-200 ${
                 selectedSize === size
-                  ? "bg-gray-800 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-white"
+                  : "bg-none"
               }`}
             >
               {size}
@@ -119,9 +117,9 @@ const QRCodeView = ({ qrBase64 }) => {
         {/* Create Button */}
         <button
           // onClick={handleDownload}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white py-4 px-6 rounded-xl font-semibold text-base transition-colors duration-200 shadow-lg hover:shadow-xl"
+          className="w-full bg-[#1D59F9] text-white py-[16px] px-[28px] rounded-[11px] font-semibold text-base transition-colors duration-200"
         >
-          Create QR
+          Download QR
         </button>
       </div>
     </div>

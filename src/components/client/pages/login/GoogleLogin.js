@@ -1,9 +1,15 @@
 "use client";
 
 import { continueWithGoogle } from "@/api/auth/api";
+import { Image } from "antd";
 import { useEffect, useRef } from "react";
 
-export default function GoogleLogin({ onLoginSuccess, onClose, setIsLogin, isLogin }) {
+export default function GoogleLogin({
+  onLoginSuccess,
+  onClose,
+  setIsLogin,
+  isLogin,
+}) {
   const googleButtonRef = useRef(null);
 
   useEffect(() => {
@@ -51,7 +57,7 @@ export default function GoogleLogin({ onLoginSuccess, onClose, setIsLogin, isLog
               }
 
               if (!isLogin) {
-                setIsLogin(true)
+                setIsLogin(true);
               }
             }
           } catch (err) {
@@ -66,11 +72,12 @@ export default function GoogleLogin({ onLoginSuccess, onClose, setIsLogin, isLog
 
       // Buton render
       window.google.accounts.id.renderButton(googleButtonRef.current, {
-        type: "icon",
-        size: "large",
         theme: "outline",
+        size: "large",
+        text: "continue_with",
+        width: 300,
+        type: "icon",
         shape: "rectangular",
-        text: "signup",
         logo_alignment: "center",
         personalization: "none",
       });
@@ -81,5 +88,12 @@ export default function GoogleLogin({ onLoginSuccess, onClose, setIsLogin, isLog
     };
   }, [onLoginSuccess, onClose]);
 
-  return <div ref={googleButtonRef}></div>;
+  return (
+    <button
+      className="w-full py-3 rounded-lg flex items-center justify-center gap-3 border"
+      onClick={() => window.google.accounts.id.prompt()}
+    >
+      <img src="/icons/google.svg" preview={false} className="w-6 h-6" />
+    </button>
+  );
 }

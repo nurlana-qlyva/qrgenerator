@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
-import { signUp } from "@/api/auth/api";
+import { signIn } from "@/api/auth/api";
 import GoogleLogin from "@/components/client/pages/login/GoogleLogin";
 import { useAuth } from "@/context/AuthContext";
 
@@ -37,15 +37,6 @@ export default function RegisterPage() {
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.name || formData.name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!formData.surname || formData.surname.trim().length < 2) {
-      newErrors.surname = "Surname must be at least 2 characters";
-    }
-
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     if (!formData.email || !emailRegex.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
@@ -90,20 +81,14 @@ export default function RegisterPage() {
 
     try {
       const data = {
-        FirstName: formData.name.trim(),
-        LastName: formData.surname.trim(),
         EmailAddress: formData.email.trim().toLowerCase(),
         Password: formData.password,
       };
 
-      console.log("📤 Sending signup request:", { ...data, password: "***" });
-
-      const res = await signUp(data);
-
-      console.log("✅ Signup successful");
+      const res = await signIn(data);
 
       if (res.accessToken) {
-        const expiry = Date.now() + 60 * 60 * 1000; // 1 hour
+        const expiry = Date.now() + 60 * 60 * 1000;
         const token = res.accessToken;
         const refreshToken = res.refreshToken;
         const decoded = jwtDecode(token);
@@ -116,21 +101,17 @@ export default function RegisterPage() {
         };
 
         localStorage.setItem("auth", JSON.stringify(authData));
-        console.log("✅ Authentication data saved");
         handleLoginSuccess(decoded);
-        // Redirect to home page
         router.push("/");
       } else {
         throw new Error("No access token received");
       }
     } catch (error) {
-      console.error("❌ Registration error:", error);
-
       if (error.response) {
         const message =
           error.response.data?.message ||
           error.response.data?.error ||
-          "Registration failed. Please try again.";
+          "Signin failed. Please try again.";
         alert(message);
         console.error("Server error:", error.response.data);
       } else if (error.request) {
@@ -197,62 +178,13 @@ export default function RegisterPage() {
         {/* Right Side - Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-10 border border-gray-100">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Sign Up</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Sign In</h2>
             <p className="text-gray-600 text-sm">
               Let's get you all set up so you can access your personal account
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* First Name & Last Name */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                  First Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="John"
-                  autoComplete="given-name"
-                  className={`border rounded-md px-4 py-2.5 w-full text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                    errors.name ? "border-red-500 bg-red-50" : "border-gray-300"
-                  }`}
-                />
-                {errors.name && (
-                  <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <span>⚠</span> {errors.name}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                  Last Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="surname"
-                  value={formData.surname}
-                  onChange={handleChange}
-                  placeholder="Doe"
-                  autoComplete="family-name"
-                  className={`border rounded-md px-4 py-2.5 w-full text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                    errors.surname
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-300"
-                  }`}
-                />
-                {errors.surname && (
-                  <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <span>⚠</span> {errors.surname}
-                  </p>
-                )}
-              </div>
-            </div>
-
             {/* Email */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1.5">
@@ -378,12 +310,12 @@ export default function RegisterPage() {
 
             {/* Login Link */}
             <p className="text-center text-xs text-gray-600">
-              Already have an account?{" "}
+              Have not an account?{" "}
               <a
-                href="/login"
+                href="/register"
                 className="text-blue-600 font-semibold hover:text-blue-700 hover:underline"
               >
-                Login
+                Register
               </a>
             </p>
 
