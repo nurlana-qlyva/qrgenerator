@@ -75,3 +75,13 @@ export async function getLogoListService() {
     }
   }
 }
+
+export async function getVCardService(id) {
+  try {
+    const res = await axios.get(`${API_BASE}/QRCode/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error("VCard fetch error:", error);
+    throw new Error(error.response?.data?.message || "VCard yüklenemedi");
+  }
+}

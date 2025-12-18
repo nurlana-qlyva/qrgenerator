@@ -1,12 +1,12 @@
 "use client";
 
-import { Form, Input, Row, Col, Image, Tabs } from "antd";
+import { Form, Input, Row, Col, Image, Tabs, Button } from "antd";
 import styles from "../../../../styles/HomePage.module.css";
 import ColorPicker from "./inner-tabs/ColorPicker";
 import FramePicker from "./inner-tabs/FramePicker";
 import QRCodeView from "./QRCodeView";
 import LogoPicker from "./inner-tabs/LogoPicker";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import ContactCard from "./inner-tabs/ContactCard";
 import { useContact } from "@/context/ContactCardContext";
 import { useQRDesign } from "@/context/QRDesignContext";
@@ -48,14 +48,18 @@ export default function VCardContent() {
     updateFormData(e.target.name, e.target.value);
   };
 
-  const handleGenerate = async () => {
+  const handleCreateQR = useCallback(async () => {
+    // Temel kontroller
+    if (!selectedBGColor || !selectedColor) {
+      return;
+    }
+
     const body = {
       type: 4,
       payload: {
         firstName: formData.firstname,
         lastName: formData.lastname,
         mobile1: formData.mobile,
-        // Mobile2: formData.firstname,
         phone: formData.phone,
         fax: formData.fax,
         email: formData.email,
@@ -95,24 +99,36 @@ export default function VCardContent() {
         alert(`Error: ${error.message}`);
       }
     }
-  };
+  }, [
+    selectedColor,
+    selectedBGColor,
+    selectedShape,
+    selectedSocialIcon,
+    selectedFinder,
+    selectedFrameColor,
+    selectedFrame,
+    formData,
+  ]);
 
   useEffect(() => {
-    if (!qrContent || !selectedBGColor || !selectedColor) {
-      return;
-    }
-
+    handleCreateQR();
   }, [
     selectedFrame,
     selectedFrameColor,
     selectedBGColor,
     selectedColor,
     selectedSocialIcon,
-    qrContent,
     selectedShape,
     selectedFinder,
-    formData
   ]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleCreateQR();
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timer);
+  }, [formData]);
 
   const [form] = Form.useForm();
 
@@ -195,7 +211,7 @@ export default function VCardContent() {
             <Image src="./icons/content.svg" alt="qr code content" width={20} />
             <h2>Enter your content</h2>
           </div>
-          <div className="max-w-2xl mx-auto p-4">
+          <div className=" p-4">
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Your name
@@ -302,7 +318,7 @@ export default function VCardContent() {
             </div>
 
             {/* Social Networks */}
-            <div className="mb-6">
+            <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Social Networks
               </label>
@@ -427,11 +443,21 @@ export default function VCardContent() {
               {/* Add More Button */}
               <button
                 onClick={addSocialLink}
-                className="mt-4 flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                className="mt-4 flex items-center gap-2 px-4 py-2 bg-[#1D59F9] text-white rounded-[11px] hover:bg-blue-600 transition-colors font-medium"
               >
                 <span className="text-xl">+</span>
                 Add more
               </button>
+            </div>
+
+            {/* Create Button */}
+            <div className="mb-6 flex items-center justify-end">
+              <Button
+                onClick={handleCreateQR}
+                className="text-center gap-2 px-4 py-2 bg-[#fff] rounded-[11px] border transition-colors font-medium w-full"
+              >
+                Create QR
+              </Button>
             </div>
           </div>
           <div>
@@ -445,7 +471,7 @@ export default function VCardContent() {
           </div>
         </Col>
         <Col span={8} className="px-[50px]">
-          <ContactCard handleGenerate={handleGenerate} />
+          <ContactCard />
           <QRCodeView qrBase64={qrBase64} />
         </Col>
       </Row>

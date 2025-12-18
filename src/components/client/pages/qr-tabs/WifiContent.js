@@ -51,9 +51,9 @@ export default function WifiContent() {
       type: 3,
       payload: {
         ssid: values.ssid,
-        password : values.password,
-        security : values.encryption,
-        hidden : hiddenNetwork
+        password: values.password,
+        security: values.encryption,
+        hidden: hiddenNetwork,
       },
       designOptions: {
         foregroundColor: selectedColor,
@@ -104,7 +104,7 @@ export default function WifiContent() {
     selectedColor,
     selectedSocialIcon,
     selectedFinder,
-    selectedShape
+    selectedShape,
   ]);
 
   const items = [
@@ -166,13 +166,13 @@ export default function WifiContent() {
             style={{
               background: "#F5F5F5",
               padding: "10px",
-              borderRadius: "10px",
+              borderRadius: "11px",
             }}
           >
             <Image src="./icons/content.svg" alt="qr code content" width={20} />
             <h2>Enter your content</h2>
           </div>
-          <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow">
+          <div className="p-4 bg-white">
             <Form
               form={form}
               layout="vertical"
@@ -232,12 +232,17 @@ export default function WifiContent() {
                     <span className="text-gray-700">Hidden network</span>
                   </div>
                 </Col>
-                <Col span={12}>
-                <Button onClick={handleGenerate}>Create</Button>
+                <Col span={24}>
+                  <Button
+                    onClick={handleGenerate}
+                    className="text-center gap-2 px-4 py-2 bg-[#fff] rounded-[11px] hover:bg-blue-600 transition-colors font-medium w-full"
+                  >
+                    Create QR
+                  </Button>
                 </Col>
               </Row>
             </Form>
-            <div>
+            <div className="mt-6">
               <Tabs
                 className={styles.designTabs}
                 tabBarExtraContent={{
