@@ -6,8 +6,7 @@ import { Modal } from "antd";
 import { Eye, EyeOff } from "lucide-react";
 import GoogleLogin from "./GoogleLogin";
 import { signIn, refreshAccessToken } from "@/api/auth/api";
-import jwt_decode from "jwt-decode";
-
+import jwt_decode from "jwt-decode"
 const LoginModal = ({ open, onClose, onLoginSuccess }) => {
   const {
     register,

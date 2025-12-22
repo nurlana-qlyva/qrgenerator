@@ -1,7 +1,6 @@
 "use client";
 
 import { continueWithGoogle } from "@/api/auth/api";
-import { Image } from "antd";
 import { useEffect, useRef } from "react";
 
 export default function GoogleLogin({
