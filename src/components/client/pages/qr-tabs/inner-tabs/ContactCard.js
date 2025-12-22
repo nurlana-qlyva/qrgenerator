@@ -9,10 +9,10 @@ import {
   Upload,
   ChevronDown,
 } from "lucide-react";
-import { Image } from "antd";
+import { Button, Image } from "antd";
 import { useContact } from "@/context/ContactCardContext";
 
-export default function ContactCard() {
+export default function ContactCard({ isLoading, handleCreateQR }) {
   const { formData } = useContact();
   const [coverImage, setCoverImage] = useState(null);
   const [coverColor, setCoverColor] = useState("#E5E7EB");
@@ -118,8 +118,8 @@ END:VCARD`;
 
   return (
     <div
-      className="w-full max-w-sm bg-white rounded-[12px] overflow-y-scroll mb-4 scrollbar-hide border-[#f5f5f5]"
-      style={{ height: "700px", border: "4px solid #f5f5f5" }}
+      className="w-full max-w-sm bg-white rounded-[12px] mb-4 border-[#f5f5f5]"
+      style={{ height: "760px", border: "4px solid #f5f5f5" }}
     >
       {/* Cover Image */}
       <div
@@ -271,7 +271,7 @@ END:VCARD`;
         </button>
 
         {/* Contact Details */}
-        <div className="space-y-3">
+        <div className="h-[250px] overflow-y-scroll scrollbar-hide">
           {formData.mobile && (
             <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition cursor-pointer">
               <div className="bg-green-500 rounded-xl p-2.5">
@@ -373,6 +373,18 @@ END:VCARD`;
               </div>
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="relative h-10">
+        <div className="absolute bottom-[5px] w-full px-2">
+          <Button
+            onClick={handleCreateQR}
+            disabled={isLoading}
+            className="text-center gap-2 px-4 py-2 bg-[#fff] rounded-[11px] border transition-colors font-medium w-full"
+          >
+            {isLoading ? "Creating..." : "Create QR"}
+          </Button>
         </div>
       </div>
     </div>

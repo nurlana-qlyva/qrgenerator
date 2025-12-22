@@ -56,34 +56,32 @@ const QRCodeView = ({ qrBase64, isLoading }) => {
     <div className="max-w-sm mx-auto bg-[#F5F5F5] rounded-[11px] overflow-hidden p-[34px]">
       {/* Header area */}
       {/* QR Code Container */}
-      <div className="relative">
-        <div className="bg-white">
-          <div className="w-48 h-48 mx-auto relative flex items-center justify-center">
-            {isLoading ? (
-              // ✅ Loading State
-              <div className="flex flex-col items-center justify-center gap-3">
-                <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-                <p className="text-sm font-medium text-gray-600">
-                  Generating QR Code...
-                </p>
-              </div>
-            ) : qrBase64 ? (
-              // ✅ QR Code Display
-              <div>
-                <Image
-                  src={qrBase64}
-                  alt="Generated QR"
-                  preview={false}
-                  style={{
-                    objectFit: "contain",
-                  }}
-                  className="rounded-lg"
-                />
-              </div>
-            ) : (
-              <div></div>
-            )}
-          </div>
+      <div className="relative ">
+        <div className="w-48 h-48 mx-auto relative flex items-center justify-center bg-white ">
+          {isLoading ? (
+            // ✅ Loading State
+            <div className="flex flex-col items-center justify-center gap-3">
+              <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+              <p className="text-sm font-medium text-gray-600">
+                Generating QR Code...
+              </p>
+            </div>
+          ) : qrBase64 ? (
+            // ✅ QR Code Display
+            <div>
+              <Image
+                src={qrBase64}
+                alt="Generated QR"
+                preview={false}
+                style={{
+                  objectFit: "contain",
+                }}
+                className="rounded-lg"
+              />
+            </div>
+          ) : (
+            <div></div>
+          )}
         </div>
       </div>
 

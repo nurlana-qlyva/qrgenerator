@@ -205,7 +205,7 @@ const TextContent = () => {
             />
           </div>
         </Col>
-        <Col span={8} className="px-[50px]">
+        <Col span={8} className="px-[24px]">
           <QRCodeView qrBase64={qrBase64} isLoading={isLoading} />
         </Col>
       </Row>

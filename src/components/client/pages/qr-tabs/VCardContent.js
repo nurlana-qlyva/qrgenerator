@@ -16,7 +16,7 @@ import { getQRCodeService } from "@/api/tabs/api";
 export default function VCardContent() {
   const [qrBase64, setQrBase64] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [hasGeneratedOnce, setHasGeneratedOnce] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState(null);
 
   const {
@@ -84,6 +84,7 @@ export default function VCardContent() {
 
       if (res?.qrCodeBase64) {
         setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
+        setHasGeneratedOnce(true);
       } else {
         throw new Error("Invalid response format");
       }
@@ -104,9 +105,9 @@ export default function VCardContent() {
   };
 
   useEffect(() => {
-    if (!qrContent || !selectedBGColor || !selectedColor || !selectedFrame) {
-      return;
-    }
+    if (!hasGeneratedOnce) return;
+    if (!selectedBGColor || !selectedColor) return;
+
     handleCreateQR();
   }, [
     selectedFrame,
@@ -114,9 +115,9 @@ export default function VCardContent() {
     selectedBGColor,
     selectedColor,
     selectedSocialIcon,
-    qrContent,
     selectedShape,
     selectedFinder,
+    hasGeneratedOnce,
   ]);
 
   const [form] = Form.useForm();
@@ -449,7 +450,7 @@ export default function VCardContent() {
             </div>
 
             {/* Create Button */}
-            <div className="mb-6 flex items-center justify-end">
+            {/* <div className="mb-6 flex items-center justify-end">
               <Button
                 onClick={handleCreateQR}
                 disabled={isLoading}
@@ -457,7 +458,7 @@ export default function VCardContent() {
               >
                 {isLoading ? "Creating..." : "Create QR"}
               </Button>
-            </div>
+            </div> */}
           </div>
           <div>
             <Tabs
@@ -469,8 +470,8 @@ export default function VCardContent() {
             />
           </div>
         </Col>
-        <Col span={8} className="px-[50px]">
-          <ContactCard />
+        <Col span={8} className="px-[24px]">
+          <ContactCard isLoading={isLoading} handleCreateQR={handleCreateQR} />
           <QRCodeView qrBase64={qrBase64} isLoading={isLoading} />
         </Col>
       </Row>

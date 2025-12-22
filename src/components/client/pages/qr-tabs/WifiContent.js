@@ -24,10 +24,11 @@ import { getQRCodeService } from "@/api/tabs/api";
 export default function WifiContent() {
   const [form] = Form.useForm();
   const [hiddenNetwork, setHiddenNetwork] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [qrBase64, setQrBase64] = useState(null);
+  const [hasGeneratedOnce, setHasGeneratedOnce] = useState(false); // ✅ Eklendi
+
   const {
-    // State values
     showLoginAlert,
     selectedColor,
     setSelectedColor,
@@ -40,8 +41,6 @@ export default function WifiContent() {
     selectedSocialIcon,
     selectedShape,
     selectedFinder,
-
-    // State setters
     setShowLoginAlert,
   } = useQRDesign();
 
@@ -66,20 +65,24 @@ export default function WifiContent() {
       },
     };
 
+    setIsLoading(true);
+    setQrBase64(null);
+
     try {
       const res = await getQRCodeService(body);
-      console.log("QR Code Response:", res);
+      console.log("✅ QR Code Response:", res);
 
       if (res?.qrCodeBase64) {
         setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
-        console.log("QR Code generated successfully!");
+        setHasGeneratedOnce(true); // ✅ İlk generate yapıldı
+        console.log("✅ QR Code generated successfully!");
       } else {
         throw new Error("Invalid response format");
       }
 
       return res;
     } catch (error) {
-      console.error("Generate QR Error:", error);
+      console.error("❌ Generate QR Error:", error);
 
       if (
         error.message.includes("authentication") ||
@@ -89,13 +92,17 @@ export default function WifiContent() {
       } else {
         alert(`Error: ${error.message}`);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // ✅ Design değişikliklerinde otomatik generate (sadece ilk generate'den sonra)
   useEffect(() => {
-    if (!selectedBGColor || !selectedColor) {
-      return;
-    }
+    if (!hasGeneratedOnce) return; // İlk generate yapılmamışsa çalışma
+    if (!selectedBGColor || !selectedColor) return;
+
+    console.log("🎨 Design changed, regenerating QR...");
     handleGenerate();
   }, [
     selectedFrame,
@@ -103,8 +110,9 @@ export default function WifiContent() {
     selectedBGColor,
     selectedColor,
     selectedSocialIcon,
-    selectedFinder,
     selectedShape,
+    selectedFinder,
+    hasGeneratedOnce, // ✅ Dependency eklendi
   ]);
 
   const items = [
@@ -112,11 +120,18 @@ export default function WifiContent() {
       key: "1",
       label: "Color",
       children: (
-        <div className="flex flex-col gap-2">
-          <h4 className="bg-white text-[14px] p-3 rounded-xl">Color</h4>
-          <ColorPicker color={selectedColor} setColor={setSelectedColor} />
-          <h4 className="bg-white text-[14px] p-3 rounded-xl">Background</h4>
-          <ColorPicker color={selectedBGColor} setColor={setSelectedBGColor} />
+        <div className="flex gap-2">
+          <div className="w-[50%]">
+            <h4 className="bg-white text-[14px] p-3 rounded-xl">Color</h4>
+            <ColorPicker color={selectedColor} setColor={setSelectedColor} />
+          </div>
+          <div className="w-[50%]">
+            <h4 className="bg-white text-[14px] p-3 rounded-xl">Background</h4>
+            <ColorPicker
+              color={selectedBGColor}
+              setColor={setSelectedBGColor}
+            />
+          </div>
         </div>
       ),
     },
@@ -128,10 +143,12 @@ export default function WifiContent() {
           <h4 className="bg-white text-[14px] p-3 rounded-xl">Frame List</h4>
           <FramePicker />
           <h4 className="bg-white text-[14px] p-3 rounded-xl">Frame Color</h4>
-          <ColorPicker
-            color={selectedFrameColor}
-            setColor={setSelectedFrameColor}
-          />
+          <div className="w-[50%]">
+            <ColorPicker
+              color={selectedFrameColor}
+              setColor={setSelectedFrameColor}
+            />
+          </div>
         </div>
       ),
     },
@@ -179,7 +196,7 @@ export default function WifiContent() {
               initialValues={{
                 ssid: "",
                 password: "",
-                encryption: "none",
+                encryption: "NOPASS",
               }}
             >
               {/* SSID and Password */}
@@ -217,7 +234,7 @@ export default function WifiContent() {
                       options={[
                         { value: "NOPASS", label: "No encryption" },
                         { value: "WPA", label: "WPA" },
-                        { value: "WEB", label: "WEP" },
+                        { value: "WEP", label: "WEP" },
                       ]}
                       placeholder="Select encryption"
                     />
@@ -235,9 +252,10 @@ export default function WifiContent() {
                 <Col span={24}>
                   <Button
                     onClick={handleGenerate}
+                    disabled={isLoading} // ✅ Loading sırasında disable
                     className="text-center gap-2 px-4 py-2 bg-[#fff] rounded-[11px] hover:bg-blue-600 transition-colors font-medium w-full"
                   >
-                    Create QR
+                    {isLoading ? "Creating..." : "Create QR"} {/* ✅ Loading feedback */}
                   </Button>
                 </Col>
               </Row>
@@ -253,8 +271,8 @@ export default function WifiContent() {
             </div>
           </div>
         </Col>
-        <Col span={8} className="px-[50px]">
-          <QRCodeView qrBase64={qrBase64} />
+        <Col span={8} className="px-[24px]">
+          <QRCodeView qrBase64={qrBase64} isLoading={isLoading} />
         </Col>
       </Row>
     </div>
