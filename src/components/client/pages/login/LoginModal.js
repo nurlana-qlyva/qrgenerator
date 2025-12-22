@@ -6,7 +6,8 @@ import { Modal } from "antd";
 import { Eye, EyeOff } from "lucide-react";
 import GoogleLogin from "./GoogleLogin";
 import { signIn, refreshAccessToken } from "@/api/auth/api";
-import jwt_decode from "jwt-decode"
+import { jwtDecode } from "jwt-decode";
+
 const LoginModal = ({ open, onClose, onLoginSuccess }) => {
   const {
     register,
@@ -34,7 +35,7 @@ const LoginModal = ({ open, onClose, onLoginSuccess }) => {
 
       if (newTokens?.accessToken) {
         const expiry = Date.now() + 60 * 60 * 1000; // 1 hour from now
-        const decoded = jwt_decode(newTokens.accessToken);
+        const decoded = jwtdec(newTokens.accessToken);
 
         const authData = {
           token: newTokens.accessToken,
@@ -91,7 +92,7 @@ const LoginModal = ({ open, onClose, onLoginSuccess }) => {
         const expiry = Date.now() + 60 * 60 * 1000; // 1 hour
         const token = res.accessToken;
         const refreshToken = res.refreshToken;
-        const decoded = jwt_decode(token);
+        const decoded = jwtDecode(token);
 
         const authData = {
           token,
