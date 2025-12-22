@@ -4,29 +4,24 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
 export async function signIn(data) {
   const res = await axios.post(`${API_BASE}/Account/accounts/signin`, data, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
   });
   return res.data;
 }
 
 export async function signUp(data) {
-  console.log("data " + data)
   const res = await axios.post(`${API_BASE}/Account/signup`, data, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
   });
   return res.data;
 }
 
+// ✅ Template literal düzeltildi
 export const refreshAccessToken = async (refreshToken) => {
   try {
-    const res = await axios.post("${API_BASE}/Account/refresh-signin", {
+    const res = await axios.post(`${API_BASE}/Account/refresh-signin`, {
       refreshToken,
     });
-
     return res.data;
   } catch (error) {
     console.error("Token refresh failed:", error);
@@ -38,9 +33,7 @@ export async function continueWithGoogle({ idToken }) {
   try {
     const res = await axios.post(
       `${API_BASE}/Account/continue-with-google`,
-      {
-        idToken,
-      },
+      { idToken },
       { headers: { "Content-Type": "application/json" } }
     );
     return res.data;

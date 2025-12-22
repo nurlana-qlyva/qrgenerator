@@ -128,6 +128,21 @@ export default function Home() {
       key: "7",
       children: `Content of Tab Pane 6`,
     },
+    {
+      label: (
+        <div className="flex items-center gap-3">
+          <Image
+            src="./icons/location.svg"
+            alt="qr code url"
+            preview={false}
+            width={20}
+          />
+          Location
+        </div>
+      ),
+      key: "8",
+      children: `Content of Tab Pane 6`,
+    },
   ];
 
   return (

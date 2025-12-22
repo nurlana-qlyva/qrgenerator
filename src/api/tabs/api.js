@@ -78,7 +78,7 @@ export async function getLogoListService() {
 
 export async function getVCardService(id) {
   try {
-    const res = await axios.get(`${API_BASE}/QRCode/${id}`);
+    const res = await axios.get(`https://qrgenerates.com/vcard/${id}`);
     return res.data;
   } catch (error) {
     console.error("VCard fetch error:", error);

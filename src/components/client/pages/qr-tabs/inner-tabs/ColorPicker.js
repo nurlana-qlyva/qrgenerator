@@ -3,24 +3,38 @@
 import React, { useState, useRef, useEffect } from "react";
 
 const ColorPicker = ({ setColor, color }) => {
-  const [hue, setHue] = useState(250);
-  const [saturation, setSaturation] = useState(100);
-  const [lightness, setLightness] = useState(35);
+  const [hue, setHue] = useState(0);
+  const [saturation, setSaturation] = useState(0);
+  const [lightness, setLightness] = useState(0);
   const [alpha, setAlpha] = useState(100);
   const [colorFormat, setColorFormat] = useState("HEX");
   const [isDragging, setIsDragging] = useState(false);
   const [isHueDragging, setIsHueDragging] = useState(false);
   const [inputValue, setInputValue] = useState(color);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const saturationRef = useRef(null);
   const hueRef = useRef(null);
-  const isFirstRender = useRef(true);
 
+  // ✅ Initialize color from prop on mount
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
+    if (color && !isInitialized) {
+      const parsedHsl = parseColorValue(color, "HEX");
+      if (parsedHsl) {
+        const [h, s, l] = parsedHsl;
+        setHue(h);
+        setSaturation(s);
+        setLightness(l);
+        setInputValue(color);
+        setIsInitialized(true);
+      }
     }
+  }, [color, isInitialized]);
+
+  // Update parent when color changes (skip first render)
+  useEffect(() => {
+    if (!isInitialized) return;
+
     const newColorValue = getColorValue(
       colorFormat,
       hue,
@@ -30,11 +44,20 @@ const ColorPicker = ({ setColor, color }) => {
     );
     setColor(newColorValue);
     setInputValue(newColorValue);
-  }, [hue, saturation, lightness, alpha, colorFormat]);
+  }, [hue, saturation, lightness, alpha, colorFormat, isInitialized]);
 
   // Sync inputValue when color prop changes externally
   useEffect(() => {
-    setInputValue(color);
+    if (isInitialized && color !== inputValue) {
+      setInputValue(color);
+      const parsedHsl = parseColorValue(color, "HEX");
+      if (parsedHsl) {
+        const [h, s, l] = parsedHsl;
+        setHue(h);
+        setSaturation(s);
+        setLightness(l);
+      }
+    }
   }, [color]);
 
   const [savedColors] = useState([
@@ -86,9 +109,12 @@ const ColorPicker = ({ setColor, color }) => {
   };
 
   const hexToHsl = (hex) => {
-    const r = parseInt(hex.slice(1, 3), 16) / 255;
-    const g = parseInt(hex.slice(3, 5), 16) / 255;
-    const b = parseInt(hex.slice(5, 7), 16) / 255;
+    // Remove # if present
+    hex = hex.replace(/^#/, "");
+
+    const r = parseInt(hex.slice(0, 2), 16) / 255;
+    const g = parseInt(hex.slice(2, 4), 16) / 255;
+    const b = parseInt(hex.slice(4, 6), 16) / 255;
 
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
@@ -184,6 +210,11 @@ const ColorPicker = ({ setColor, color }) => {
 
   const parseColorValue = (value, format) => {
     try {
+      // Auto-detect HEX format
+      if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+        return hexToHsl(value);
+      }
+
       switch (format) {
         case "HEX":
           if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
@@ -233,7 +264,7 @@ const ColorPicker = ({ setColor, color }) => {
           break;
       }
     } catch (e) {
-      console.error("Renk parsing hatası:", e);
+      console.error("Color parsing error:", e);
     }
     return null;
   };
@@ -340,11 +371,11 @@ const ColorPicker = ({ setColor, color }) => {
 
   return (
     <div className="bg-[#f5f5f5] p-6 rounded-[11px]">
-      <div className="flex gap-6">
+      <div className="flex flex-col gap-6">
         <div className="flex-shrink-0">
           <div
             ref={saturationRef}
-            className="w-56 h-56 rounded-xl cursor-crosshair relative overflow-hidden"
+            className="w-full h-24 rounded-xl cursor-crosshair relative overflow-hidden"
             style={{
               background: `linear-gradient(to right, white, hsl(${hue}, 100%, 50%)), 
                           linear-gradient(to top, black, transparent)`,

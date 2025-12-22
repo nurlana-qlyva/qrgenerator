@@ -3,9 +3,10 @@
 import { useQRDesign } from "@/context/QRDesignContext";
 import { Image } from "antd";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
-const QRCodeView = ({ qrBase64 }) => {
+const QRCodeView = ({ qrBase64, isLoading }) => {
   const [selectedFormat, setSelectedFormat] = useState("PNG");
   const [selectedSize, setSelectedSize] = useState("1000px");
 
@@ -58,8 +59,16 @@ const QRCodeView = ({ qrBase64 }) => {
       <div className="relative">
         <div className="bg-white">
           <div className="w-48 h-48 mx-auto relative flex items-center justify-center">
-            {/* QR Code - Dinamik pozisyonlama */}
-            {qrBase64 ? (
+            {isLoading ? (
+              // ✅ Loading State
+              <div className="flex flex-col items-center justify-center gap-3">
+                <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+                <p className="text-sm font-medium text-gray-600">
+                  Generating QR Code...
+                </p>
+              </div>
+            ) : qrBase64 ? (
+              // ✅ QR Code Display
               <div>
                 <Image
                   src={qrBase64}
@@ -87,9 +96,7 @@ const QRCodeView = ({ qrBase64 }) => {
               key={format}
               onClick={() => setSelectedFormat(format)}
               className={`flex-1 py-3 px-4 rounded-[6px] text-sm font-medium transition-all duration-200 ${
-                selectedFormat === format
-                  ? "bg-white"
-                  : "bg-none"
+                selectedFormat === format ? "bg-white" : "bg-none"
               }`}
             >
               {format}
@@ -104,9 +111,7 @@ const QRCodeView = ({ qrBase64 }) => {
               key={size}
               onClick={() => setSelectedSize(size)}
               className={`flex-1 py-3 px-3 rounded-xl text-xs font-medium transition-all duration-200 ${
-                selectedSize === size
-                  ? "bg-white"
-                  : "bg-none"
+                selectedSize === size ? "bg-white" : "bg-none"
               }`}
             >
               {size}

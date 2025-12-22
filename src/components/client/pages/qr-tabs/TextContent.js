@@ -12,6 +12,8 @@ import { getQRCodeService } from "@/api/tabs/api";
 
 const TextContent = () => {
   const [qrBase64, setQrBase64] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     // State values
     showLoginAlert,
@@ -52,6 +54,9 @@ const TextContent = () => {
       },
     };
 
+    setIsLoading(true);
+    setQrBase64(null);
+
     if (!!textValue) {
       try {
         const res = await getQRCodeService(body);
@@ -76,6 +81,8 @@ const TextContent = () => {
         } else {
           alert(`Error: ${error.message}`);
         }
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -89,9 +96,11 @@ const TextContent = () => {
     selectedFrame,
     selectedFrameColor,
     selectedBGColor,
-    selectedColor, 
+    selectedColor,
     selectedSocialIcon,
     qrContent,
+    selectedShape,
+    selectedFinder,
   ]);
 
   const title = (
@@ -109,11 +118,18 @@ const TextContent = () => {
       key: "1",
       label: "Color",
       children: (
-        <div className="flex flex-col gap-2">
-          <h4 className="bg-white text-[14px] p-3 rounded-xl">Color</h4>
-          <ColorPicker color={selectedColor} setColor={setSelectedColor} />
-          <h4 className="bg-white text-[14px] p-3 rounded-xl">Background</h4>
-          <ColorPicker color={selectedBGColor} setColor={setSelectedBGColor} />
+        <div className="flex gap-2">
+          <div className="w-[50%]">
+            <h4 className="bg-white text-[14px] p-3 rounded-xl">Color</h4>
+            <ColorPicker color={selectedColor} setColor={setSelectedColor} />
+          </div>
+          <div className="w-[50%]">
+            <h4 className="bg-white text-[14px] p-3 rounded-xl">Background</h4>
+            <ColorPicker
+              color={selectedBGColor}
+              setColor={setSelectedBGColor}
+            />
+          </div>
         </div>
       ),
     },
@@ -125,10 +141,12 @@ const TextContent = () => {
           <h4 className="bg-white text-[14px] p-3 rounded-xl">Frame List</h4>
           <FramePicker />
           <h4 className="bg-white text-[14px] p-3 rounded-xl">Frame Color</h4>
-          <ColorPicker
-            color={selectedFrameColor}
-            setColor={setSelectedFrameColor}
-          />
+          <div className="w-[50%]">
+            <ColorPicker
+              color={selectedFrameColor}
+              setColor={setSelectedFrameColor}
+            />
+          </div>
         </div>
       ),
     },
@@ -188,7 +206,7 @@ const TextContent = () => {
           </div>
         </Col>
         <Col span={8} className="px-[50px]">
-          <QRCodeView qrBase64={qrBase64} />
+          <QRCodeView qrBase64={qrBase64} isLoading={isLoading} />
         </Col>
       </Row>
     </div>
