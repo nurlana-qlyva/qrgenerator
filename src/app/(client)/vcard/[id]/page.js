@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { getVCardService } from "@/api/tabs/api";
+import { Phone, Mail, MapPin } from "lucide-react";
 
 export default function VCardPage() {
   const params = useParams();
@@ -16,7 +17,28 @@ export default function VCardPage() {
     const fetchVCardData = async () => {
       try {
         const data = await getVCardService(params.id);
-        setVcardData(data);
+
+        // payloadJson'u parse et
+        const payload = JSON.parse(data.payloadJson);
+
+        // Veriyi düzenle
+        const formattedData = {
+          firstName: payload.FirstName || "",
+          lastName: payload.LastName || "",
+          yourJob: payload.YourJob || "",
+          companyName: payload.CompanyName || "",
+          mobile: payload.Mobile1 || "",
+          phone: payload.Phone || "",
+          fax: payload.Fax || "",
+          email: payload.Email || "",
+          address: payload.Address || "",
+          coverPhoto: data.coverPhotoURL,
+          coverColor: data.solidColor || "#E5E7EB",
+          profilePhoto: data.profilePhotoURL,
+          socialLinks: payload.social || [], 
+        };
+
+        setVcardData(formattedData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -43,7 +65,7 @@ EMAIL:${vcardData.email || ""}
 ORG:${vcardData.companyName || ""}
 TITLE:${vcardData.yourJob || ""}
 ADR;TYPE=WORK:;;${vcardData.address || ""};;;;
-URL:${vcardData.website || ""}
+URL:${vcardData.social || ""}
 ${
   vcardData.socialLinks
     ?.map((link) => `URL;TYPE=${link.platform}:${link.url}`)
@@ -64,10 +86,10 @@ END:VCARD`;
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg font-medium">Yükleniyor...</p>
+          <p className="text-gray-600 text-lg font-medium">Loading...</p>
         </div>
       </div>
     );
@@ -75,16 +97,16 @@ END:VCARD`;
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-pink-100 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
         <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md w-full">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Hata</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <button
             onClick={() => router.push("/")}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
-            Ana Sayfaya Dön
+            Go Home
           </button>
         </div>
       </div>
@@ -102,254 +124,178 @@ END:VCARD`;
     instagram: { name: "Instagram", color: "#e1306c" },
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Kart Container */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden transform hover:scale-[1.01] transition-transform duration-300">
-          {/* Header Gradient */}
-          <div className="h-40 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 relative overflow-hidden">
-            <div className="absolute inset-0 bg-black/10"></div>
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
-          </div>
+  const fullName = `${vcardData.firstName} ${vcardData.lastName}`.trim();
+  const activeSocialLinks =
+    vcardData.socialLinks?.filter((link) => link.url) || [];
 
-          {/* Profile Section */}
-          <div className="px-6 sm:px-8 pb-8">
-            {/* Avatar */}
-            <div className="relative -mt-20 mb-6">
-              <div className="w-36 h-36 bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-500 rounded-full border-4 border-white shadow-2xl flex items-center justify-center mx-auto transform hover:scale-105 transition-transform">
-                <span className="text-5xl font-bold text-white">
+  return (
+    <div className="min-h-screen bg-gray-100 py-8 px-4 flex items-center justify-center">
+      <div
+        className="w-full max-w-sm bg-white rounded-[12px] border-[#f5f5f5] relative"
+        style={{ minHeight: "720px", border: "4px solid #f5f5f5" }}
+      >
+        {/* Cover Image */}
+        <div
+          className="relative h-48"
+          style={{
+            backgroundColor: vcardData.coverPhoto
+              ? "transparent"
+              : vcardData.coverColor || "#E5E7EB",
+          }}
+        >
+          {vcardData.coverPhoto && (
+            <img
+              src={vcardData.coverPhoto}
+              alt="Cover"
+              className="w-full h-full object-cover"
+            />
+          )}
+
+          {/* Profile Picture */}
+          <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 border-4 border-white shadow-lg flex items-center justify-center overflow-hidden">
+              {vcardData.profilePhoto ? (
+                <img
+                  src={vcardData.profilePhoto}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : fullName ? (
+                <span className="text-white text-2xl font-bold">
                   {vcardData.firstName?.charAt(0)}
                   {vcardData.lastName?.charAt(0)}
                 </span>
-              </div>
+              ) : null}
             </div>
+          </div>
+        </div>
 
-            {/* Name */}
-            <div className="text-center mb-2">
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                {vcardData.firstName} {vcardData.lastName}
-              </h1>
+        {/* Contact Info */}
+        <div className="pt-16 px-6 pb-6">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              {fullName || "Your Name"}
+            </h1>
+            {vcardData.yourJob && (
+              <p className="text-gray-600 text-sm">{vcardData.yourJob}</p>
+            )}
+            {vcardData.companyName && (
+              <p className="text-gray-500 text-sm">{vcardData.companyName}</p>
+            )}
+          </div>
 
-              {/* Job & Company */}
-              {(vcardData.yourJob || vcardData.companyName) && (
-                <div className="flex items-center justify-center gap-2 text-gray-600">
-                  {vcardData.yourJob && (
-                    <span className="text-lg font-medium">
-                      {vcardData.yourJob}
-                    </span>
-                  )}
-                  {vcardData.yourJob && vcardData.companyName && (
-                    <span className="text-gray-400">•</span>
-                  )}
-                  {vcardData.companyName && (
-                    <span className="text-lg">{vcardData.companyName}</span>
-                  )}
+          {/* Save Contact Button */}
+          <button
+            onClick={downloadVCard}
+            disabled={!fullName}
+            className="w-full bg-black text-white py-3 rounded-full font-medium mb-6 hover:bg-gray-800 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            Save Contact
+          </button>
+
+          {/* Contact Details */}
+          <div className="max-h-[400px] overflow-y-auto scrollbar-hide">
+            {vcardData.mobile && (
+              <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition cursor-pointer">
+                <div className="bg-green-500 rounded-xl p-2.5">
+                  <Phone size={20} className="text-white" />
                 </div>
-              )}
-            </div>
-
-            <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto mb-8 rounded-full"></div>
-
-            {/* Contact Information Grid */}
-            <div className="grid gap-3 mb-8">
-              {vcardData.mobile && (
-                <a
-                  href={`tel:${vcardData.mobile}`}
-                  className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl hover:from-blue-100 hover:to-blue-200 transition-all group border border-blue-200/50"
-                >
-                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
-                    <span className="text-white text-2xl">📱</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs text-blue-600 font-semibold uppercase tracking-wide">
-                      Mobil
-                    </p>
-                    <p className="text-gray-900 font-semibold text-lg">
-                      {vcardData.mobile}
-                    </p>
-                  </div>
-                  <svg
-                    className="w-6 h-6 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </a>
-              )}
-
-              {vcardData.phone && (
-                <a
-                  href={`tel:${vcardData.phone}`}
-                  className="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-xl hover:from-green-100 hover:to-green-200 transition-all group border border-green-200/50"
-                >
-                  <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
-                    <span className="text-white text-2xl">☎️</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs text-green-600 font-semibold uppercase tracking-wide">
-                      Telefon
-                    </p>
-                    <p className="text-gray-900 font-semibold text-lg">
-                      {vcardData.phone}
-                    </p>
-                  </div>
-                  <svg
-                    className="w-6 h-6 text-green-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </a>
-              )}
-
-              {vcardData.email && (
-                <a
-                  href={`mailto:${vcardData.email}`}
-                  className="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl hover:from-purple-100 hover:to-purple-200 transition-all group border border-purple-200/50"
-                >
-                  <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
-                    <span className="text-white text-2xl">✉️</span>
-                  </div>
-                  <div className="flex-1 overflow-hidden">
-                    <p className="text-xs text-purple-600 font-semibold uppercase tracking-wide">
-                      E-posta
-                    </p>
-                    <p className="text-gray-900 font-semibold text-lg truncate">
-                      {vcardData.email}
-                    </p>
-                  </div>
-                  <svg
-                    className="w-6 h-6 text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </a>
-              )}
-
-              {vcardData.website && (
-                <a
-                  href={vcardData.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl hover:from-orange-100 hover:to-orange-200 transition-all group border border-orange-200/50"
-                >
-                  <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
-                    <span className="text-white text-2xl">🌐</span>
-                  </div>
-                  <div className="flex-1 overflow-hidden">
-                    <p className="text-xs text-orange-600 font-semibold uppercase tracking-wide">
-                      Website
-                    </p>
-                    <p className="text-gray-900 font-semibold text-lg truncate">
-                      {vcardData.website}
-                    </p>
-                  </div>
-                  <svg
-                    className="w-6 h-6 text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                    />
-                  </svg>
-                </a>
-              )}
-
-              {vcardData.address && (
-                <div className="flex items-start gap-4 p-4 bg-gradient-to-r from-red-50 to-red-100 rounded-xl border border-red-200/50">
-                  <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-                    <span className="text-white text-2xl">📍</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs text-red-600 font-semibold uppercase tracking-wide mb-1">
-                      Adres
-                    </p>
-                    <p className="text-gray-900 font-medium leading-relaxed">
-                      {vcardData.address}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Social Networks */}
-            {vcardData.socialLinks && vcardData.socialLinks.length > 0 && (
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span className="text-2xl">🔗</span>
-                  Sosyal Medya
-                </h3>
-                <div className="grid grid-cols-3 gap-4">
-                  {vcardData.socialLinks.map((link, index) => (
-                    <a
-                      key={index}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex flex-col items-center gap-3 p-4 bg-gray-50 rounded-xl hover:bg-white hover:shadow-lg transition-all group border border-gray-200"
-                    >
-                      <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md group-hover:scale-110 transition-transform">
-                        <Image
-                          src={`/socials/${link.platform}.png`}
-                          alt={link.platform}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <span className="text-sm font-semibold text-gray-700 capitalize">
-                        {socialPlatforms[link.platform]?.name || link.platform}
-                      </span>
-                    </a>
-                  ))}
+                <div className="flex-1">
+                  <p className="text-xs text-gray-500">Mobile</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {vcardData.mobile}
+                  </p>
                 </div>
               </div>
             )}
 
-            {/* Download Button */}
-            <button
-              onClick={downloadVCard}
-              className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-5 rounded-xl font-bold text-lg hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 transition-all shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 group"
-            >
-              <span className="text-3xl group-hover:scale-110 transition-transform">
-                📥
-              </span>
-              <span>Kişiyi Rehbere Kaydet</span>
-            </button>
-          </div>
-        </div>
+            {vcardData.phone && (
+              <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition cursor-pointer">
+                <div className="bg-green-500 rounded-xl p-2.5">
+                  <Phone size={20} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-gray-500">Phone</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {vcardData.phone}
+                  </p>
+                </div>
+              </div>
+            )}
 
-        {/* Footer */}
-        <div className="text-center mt-8">
-          <p className="text-gray-500 text-sm">Powered by QR Technology ⚡</p>
+            {vcardData.email && (
+              <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition cursor-pointer">
+                <div className="bg-blue-500 rounded-xl p-2.5">
+                  <Mail size={20} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-gray-500">Email</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {vcardData.email}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {vcardData.address && (
+              <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition cursor-pointer">
+                <div className="bg-red-500 rounded-xl p-2.5">
+                  <MapPin size={20} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-gray-500">Location</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {vcardData.address}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Social Networks */}
+            {activeSocialLinks.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                  Social Networks
+                </h3>
+                <div className="space-y-3">
+                  {activeSocialLinks.map((link) => {
+                    const platform = socialPlatforms[link.platform];
+                    return (
+                      <a
+                        key={link.id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition cursor-pointer"
+                      >
+                        <div
+                          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                          style={{ backgroundColor: platform?.color }}
+                        >
+                          <Image
+                            src={`/socials/${link.platform}.png`}
+                            alt={platform?.name}
+                            width={44}
+                            height={44}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900">
+                            {platform?.name}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {link.url
+                              .replace(/^https?:\/\//, "")
+                              .replace(/^www\./, "")}
+                          </p>
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

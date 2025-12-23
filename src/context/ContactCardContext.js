@@ -21,11 +21,16 @@ export function ContactProvider({ children }) {
     socialLinks: [{ id: Date.now(), platform: "linkedin", url: "" }],
   });
 
+  // Cover ve Profile image state'leri
+  const [coverImage, setCoverImage] = useState(null);
+  const [coverColor, setCoverColor] = useState("#E5E7EB");
+  const [profileImage, setProfileImage] = useState(null);
+
   const updateFormData = (name, value) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));
+    })); 
   };
 
   const addSocialLink = () => {
@@ -62,6 +67,12 @@ export function ContactProvider({ children }) {
         addSocialLink,
         removeSocialLink,
         updateSocialLink,
+        coverImage,
+        setCoverImage,
+        coverColor,
+        setCoverColor,
+        profileImage,
+        setProfileImage,
       }}
     >
       {children}

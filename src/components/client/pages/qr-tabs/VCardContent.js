@@ -11,7 +11,7 @@ import ContactCard from "./inner-tabs/ContactCard";
 import { useContact } from "@/context/ContactCardContext";
 import { useQRDesign } from "@/context/QRDesignContext";
 import ShapePicker from "./inner-tabs/ShapePicker";
-import { getQRCodeService } from "@/api/tabs/api";
+import { getQRCodeService, postVcardPhotoService } from "@/api/tabs/api";
 
 export default function VCardContent() {
   const [qrBase64, setQrBase64] = useState(null);
@@ -44,6 +44,9 @@ export default function VCardContent() {
     addSocialLink,
     removeSocialLink,
     updateSocialLink,
+    coverImage,
+    coverColor,
+    profileImage,
   } = useContact();
 
   const handleChange = (e) => {
@@ -51,6 +54,31 @@ export default function VCardContent() {
   };
 
   const handleCreateQR = async () => {
+    // Base64'ü File objesine çevir
+    const base64ToFile = (base64String, filename) => {
+      if (!base64String) return null;
+
+      const arr = base64String.split(",");
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+
+      return new File([u8arr], filename, { type: mime });
+    };
+
+    const getCoverData = () => {
+      return base64ToFile(coverImage, "cover-photo.png");
+    };
+
+    const getProfileData = () => {
+      return base64ToFile(profileImage, "profile-photo.png");
+    };
+
     const body = {
       type: 4,
       payload: {
@@ -63,7 +91,12 @@ export default function VCardContent() {
         companyName: formData.companyName,
         yourJob: formData.job,
         address: formData.address,
-        website: formData.website,
+        social: formData.socialLinks
+          .filter((link) => link.url)
+          .map((link) => ({
+            platform: link.platform,
+            url: link.url,
+          })),
       },
       designOptions: {
         foregroundColor: selectedColor,
@@ -80,16 +113,42 @@ export default function VCardContent() {
     setQrBase64(null);
 
     try {
-      const res = await getQRCodeService(body);
+      // İlk olarak QR code oluştur
+      const qrRes = await getQRCodeService(body);
 
-      if (res?.qrCodeBase64) {
-        setQrBase64(`data:image/png;base64,${res.qrCodeBase64}`);
+      if (qrRes?.qrCodeBase64) {
+        setQrBase64(`data:image/png;base64,${qrRes.qrCodeBase64}`);
         setHasGeneratedOnce(true);
       } else {
         throw new Error("Invalid response format");
       }
 
-      return res;
+      // Sonra VCard output için cover ve profile gönder
+      const authData = JSON.parse(localStorage.getItem("auth") || "{}");
+      const token = authData?.token;
+
+      const formData = new FormData();
+
+      // QR Code ID ekle
+      formData.append("qRCodeId", qrRes.qrCodeId);
+
+      // Cover photo veya solid color
+      const coverFile = getCoverData();
+      if (coverFile) {
+        formData.append("coverPhotoFile", coverFile);
+      }
+      formData.append("solidColor", coverColor);
+      formData.append("IsSolidColorOnCover", coverImage ? "false" : "true");
+
+      // Profile photo
+      const profileFile = getProfileData();
+      if (profileFile) {
+        formData.append("profilePhotoFile", profileFile);
+      }
+
+      const vcardRes = await postVcardPhotoService(formData);
+
+      return qrRes;
     } catch (error) {
       if (
         error.message.includes("authentication") ||
@@ -448,17 +507,6 @@ export default function VCardContent() {
                 Add more
               </button>
             </div>
-
-            {/* Create Button */}
-            {/* <div className="mb-6 flex items-center justify-end">
-              <Button
-                onClick={handleCreateQR}
-                disabled={isLoading}
-                className="text-center gap-2 px-4 py-2 bg-[#fff] rounded-[11px] border transition-colors font-medium w-full"
-              >
-                {isLoading ? "Creating..." : "Create QR"}
-              </Button>
-            </div> */}
           </div>
           <div>
             <Tabs

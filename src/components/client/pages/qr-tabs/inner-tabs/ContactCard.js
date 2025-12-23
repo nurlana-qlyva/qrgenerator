@@ -13,10 +13,16 @@ import { Button, Image } from "antd";
 import { useContact } from "@/context/ContactCardContext";
 
 export default function ContactCard({ isLoading, handleCreateQR }) {
-  const { formData } = useContact();
-  const [coverImage, setCoverImage] = useState(null);
-  const [coverColor, setCoverColor] = useState("#E5E7EB");
-  const [profileImage, setProfileImage] = useState(null);
+  const {
+    formData,
+    coverImage,
+    setCoverImage,
+    coverColor,
+    setCoverColor,
+    profileImage,
+    setProfileImage,
+  } = useContact();
+
   const [showCoverDropdown, setShowCoverDropdown] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const coverInputRef = useRef(null);
@@ -118,7 +124,7 @@ END:VCARD`;
 
   return (
     <div
-      className="w-full max-w-sm bg-white rounded-[12px] mb-4 border-[#f5f5f5] relative"
+      className="w-full max-w-sm bg-white rounded-[12px] mb-4 border-[#f5f5f5] relative overflow-hidden"
       style={{ height: "720px", border: "4px solid #f5f5f5" }}
     >
       {/* Cover Image */}
