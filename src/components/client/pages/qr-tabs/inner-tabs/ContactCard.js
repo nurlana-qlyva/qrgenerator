@@ -118,8 +118,8 @@ END:VCARD`;
 
   return (
     <div
-      className="w-full max-w-sm bg-white rounded-[12px] mb-4 border-[#f5f5f5]"
-      style={{ height: "760px", border: "4px solid #f5f5f5" }}
+      className="w-full max-w-sm bg-white rounded-[12px] mb-4 border-[#f5f5f5] relative"
+      style={{ height: "720px", border: "4px solid #f5f5f5" }}
     >
       {/* Cover Image */}
       <div

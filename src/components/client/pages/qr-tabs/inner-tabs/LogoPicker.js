@@ -8,17 +8,21 @@ import { getLogoListService } from "@/api/tabs/api";
 
 const { Dragger } = Upload;
 
-const SocialIcon = ({ icon, name, isSelected, onClick }) => (
+const SocialIcon = ({ icon, name, isSelected, onClick, isNone }) => (
   <div
     className={`w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-all duration-200 ${
       isSelected
         ? "ring-2 ring-blue-500 ring-offset-2 shadow-lg"
         : "hover:shadow-md"
-    }`}
+    } ${isNone ? "border-2 border-gray-300 bg-white" : ""}`}
     title={name}
     onClick={onClick}
   >
-    <Image src={icon} alt={`${name} logo`} preview={false} />
+    {isNone ? (
+      <span className="text-xs text-gray-500 font-medium">None</span>
+    ) : (
+      <Image src={icon} alt={`${name} logo`} preview={false} />
+    )}
   </div>
 );
 
@@ -112,7 +116,11 @@ const LogoPicker = () => {
   const handleSocialIconClick = (social) => {
     if (selectedSocialIcon?.name === social.name) {
       setSelectedSocialIcon(social.id);
-    } 
+    }
+  };
+
+  const handleNoneClick = () => {
+    setSelectedSocialIcon(null);
   };
 
   return (
@@ -123,6 +131,16 @@ const LogoPicker = () => {
           Choose Social Media Icon:
         </h4>
         <div className="flex flex-wrap gap-3 justify-center mb-8">
+          {/* None Option */}
+          <SocialIcon
+            key="none"
+            name="None"
+            isSelected={selectedSocialIcon === null}
+            onClick={handleNoneClick}
+            isNone={true}
+          />
+
+          {/* Social Icons */}
           {(socialIcons || []).map((social) => (
             <SocialIcon
               key={social.id}
